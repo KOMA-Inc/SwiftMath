@@ -553,23 +553,29 @@ public struct MTMathListBuilder {
             return rad;
         } else if command == "operatorname" {
             // get operator name in { } curly brackets and return it as atom
-            guard hasCharacters else {
+            guard let openingBracketIndex = string[currentCharIndex...].firstIndex(of: "{") else {
                 let message = "command 'operatorname' should have operator in curly brackets"
                 setError(.invalidCommand, message: message)
                 return nil
             }
-            let ch = getNextCharacter()
-            guard ch == "{" else {
+
+            guard string[currentCharIndex..<openingBracketIndex].allSatisfy(\.isWhitespace) else {
+                let message = "command 'operatorname'can only contain whitespaces before { bracket"
+                setError(.invalidCommand, message: message)
+                return nil
+            }
+
+            guard
+                let closingBracketIndex = string[currentCharIndex...].firstIndex(of: "}"),
+                closingBracketIndex > openingBracketIndex else {
                 let message = "command 'operatorname' should have operator in curly brackets"
                 setError(.invalidCommand, message: message)
                 return nil
             }
-            guard let closingBracketIndex = string[currentCharIndex...].firstIndex(of: "}") else {
-                let message = "command 'operatorname' should have operator in curly brackets"
-                setError(.invalidCommand, message: message)
-                return nil
-            }
-            let operatorName = String(string[currentCharIndex..<closingBracketIndex])
+
+            currentCharIndex = openingBracketIndex + 1
+
+            let operatorName = String(string[currentCharIndex..<closingBracketIndex].filter { !$0.isWhitespace} )
             guard let atom = MTMathAtomFactory.atom(forLatexSymbol: operatorName) else {
                 let message = "command 'operatorname' should have operator in curly brackets"
                 setError(.invalidCommand, message: message)
@@ -892,27 +898,35 @@ public struct MTMathListBuilder {
 
     mutating func readEnvColumnDefinition(for env: String) -> [MTColumnAlignment]? {
 
-        // Check that currently string starts with {
+        // Check that there is an opening bracket
 
-        guard hasCharacters else {
-            setError(.invalidCommand, message: "\(env) should have column definition surrounded by curly brackets { }")
+        guard let openingBracketIndex = string[currentCharIndex...].firstIndex(of: "{") else {
+            let message = "\(env) should have operator in curly brackets"
+            setError(.invalidCommand, message: message)
             return nil
         }
-        let char = getNextCharacter()
 
-        guard char == "{" else {
-            setError(.invalidCommand, message: "\(env) should have column definition surrounded by curly brackets { }")
+        // Skip whitespaces
+
+        guard string[currentCharIndex..<openingBracketIndex].allSatisfy(\.isWhitespace) else {
+            let message = "\(env) can only contain whitespaces before { bracket"
+            setError(.invalidCommand, message: message)
             return nil
         }
 
         // Check that there is a closing } bracket
 
-        guard hasCharacters, let closingBracketIndex = string[currentCharIndex...].firstIndex(of: "}") else {
-            setError(.invalidCommand, message: "\(env) should have column definition surrounded by curly brackets { }")
+        guard
+            let closingBracketIndex = string[currentCharIndex...].firstIndex(of: "}"),
+            closingBracketIndex > openingBracketIndex else {
+            let message = "\(env) should have column definition in curly brackets"
+            setError(.invalidCommand, message: message)
             return nil
         }
 
         // Iterate from { to } and get column definitions
+
+        currentCharIndex = openingBracketIndex + 1
 
         var definitions: [MTColumnAlignment] = []
 
@@ -920,6 +934,8 @@ public struct MTMathListBuilder {
             let char = getNextCharacter()
             // Symbol for vertical bars, currently not supported, ignoring
             if char == "|" {
+                continue
+            } else if char.isWhitespace {
                 continue
             } else if char == "l" {
                 definitions.append(.left)
