@@ -560,7 +560,7 @@ public struct MTMathListBuilder {
             }
 
             guard string[currentCharIndex..<openingBracketIndex].allSatisfy(\.isWhitespace) else {
-                let message = "command 'operatorname'can only contain whitespaces before { bracket"
+                let message = "command 'operatorname' can only contain whitespaces before { bracket"
                 setError(.invalidCommand, message: message)
                 return nil
             }
@@ -576,11 +576,8 @@ public struct MTMathListBuilder {
             currentCharIndex = openingBracketIndex + 1
 
             let operatorName = String(string[currentCharIndex..<closingBracketIndex].filter { !$0.isWhitespace} )
-            guard let atom = MTMathAtomFactory.atom(forLatexSymbol: operatorName) else {
-                let message = "command 'operatorname' should have operator in curly brackets"
-                setError(.invalidCommand, message: message)
-                return nil
-            }
+            let atom = MTMathAtomFactory.atom(forLatexSymbol: operatorName) ?? MTMathAtomFactory.operatorWithName(operatorName, limits: false)
+
             currentCharIndex = closingBracketIndex + 1
             return atom
         } else if command == "left" {
