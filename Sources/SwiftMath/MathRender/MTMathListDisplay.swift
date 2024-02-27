@@ -40,16 +40,26 @@ public class MTDisplay:NSObject {
     // needed for isIos6Supported() func above
     static var initialized = false
     static var supported = false
-    
+
     /// Draws itself in the given graphics context.
     public func draw(_ context:CGContext) {
+
+        context.saveGState()
+
         if self.localBackgroundColor != nil {
-            context.saveGState()
             context.setBlendMode(.normal)
             context.setFillColor(self.localBackgroundColor!.cgColor)
             context.fill(self.displayBounds())
-            context.restoreGState()
         }
+
+        if needsBorder {
+            context.setStrokeColor(MTColor.black.cgColor)
+            context.setLineWidth(1.0)
+            let bounds = CGRect(x: position.x - 3, y: position.y - descent, width: width + 6, height: ascent + descent)
+            context.stroke(bounds)
+        }
+
+        context.restoreGState()
     }
     
     /// Gets the bounding rectangle for the MTDisplay
@@ -100,7 +110,8 @@ public class MTDisplay:NSObject {
     var localTextColor: MTColor?
     /// The background color for this display
     var localBackgroundColor: MTColor?
-    
+    var needsBorder: Bool = false
+
 }
 
 /// Special class to be inherited from that implements the DownShift protocol

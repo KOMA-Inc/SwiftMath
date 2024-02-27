@@ -244,13 +244,13 @@ public struct MTMathListBuilder {
                 return nil
             } else if char == "\\" {
                 let command = readCommand()
-                let done = stopCommand(command, list:list, stopChar:stop)
+                let done = stopCommand(command, list: list, stopChar: stop)
                 if done != nil {
                     return done
                 } else if error != nil {
                     return nil
                 }
-                if self.applyModifier(command, atom:prevAtom) {
+                if self.applyModifier(command, atom: prevAtom) {
                     continue
                 }
                 
@@ -637,6 +637,11 @@ public struct MTMathListBuilder {
             mathColorbox.colorString = self.readColor()!
             mathColorbox.innerList = self.buildInternal(true)
             return mathColorbox
+        } else if command == "boxed" {
+            // A boxed command has 1 argument
+            let boxed = MTMathBoxed()
+            boxed.innerList = self.buildInternal(true)
+            return boxed
         } else {
             let errorMessage = "Invalid command \\\(command)"
             self.setError(.invalidCommand, message:errorMessage)

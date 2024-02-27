@@ -66,7 +66,8 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
     case color
     case textcolor
     case colorBox
-    
+    case boxed
+
     // Atoms after this point are not part of TeX and do not have the usual structure.
     
     /// An table atom. This atom does not exist in TeX. It is equivalent to the TeX command
@@ -86,30 +87,56 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
     // we want string representations to be capitalized
     public var description: String {
         switch self {
-            case .ordinary:       return "Ordinary"
-            case .number:         return "Number"
-            case .variable:       return "Variable"
-            case .largeOperator:  return "Large Operator"
-            case .binaryOperator: return "Binary Operator"
-            case .unaryOperator:  return "Unary Operator"
-            case .relation:       return "Relation"
-            case .open:           return "Open"
-            case .close:          return "Close"
-            case .fraction:       return "Fraction"
-            case .radical:        return "Radical"
-            case .punctuation:    return "Punctuation"
-            case .placeholder:    return "Placeholder"
-            case .inner:          return "Inner"
-            case .underline:      return "Underline"
-            case .overline:       return "Overline"
-            case .accent:         return "Accent"
-            case .boundary:       return "Boundary"
-            case .space:          return "Space"
-            case .style:          return "Style"
-            case .color:          return "Color"
-            case .textcolor:      return "TextColor"
-            case .colorBox:       return "Colorbox"
-            case .table:          return "Table"
+        case .ordinary:
+            return "Ordinary"
+        case .number:
+            return "Number"
+        case .variable:
+            return "Variable"
+        case .largeOperator:
+            return "Large Operator"
+        case .binaryOperator:
+            return "Binary Operator"
+        case .unaryOperator:
+            return "Unary Operator"
+        case .relation:
+            return "Relation"
+        case .open:
+            return "Open"
+        case .close:
+            return "Close"
+        case .fraction:
+            return "Fraction"
+        case .radical:
+            return "Radical"
+        case .punctuation:
+            return "Punctuation"
+        case .placeholder:
+            return "Placeholder"
+        case .inner:
+            return "Inner"
+        case .underline:
+            return "Underline"
+        case .overline:
+            return "Overline"
+        case .accent:
+            return "Accent"
+        case .boundary:
+            return "Boundary"
+        case .space:
+            return "Space"
+        case .style:
+            return "Style"
+        case .color:
+            return "Color"
+        case .textcolor:
+            return "TextColor"
+        case .colorBox:
+            return "Colorbox"
+        case .boxed:
+            return "Boxed"
+        case .table:
+            return "Table"
         }
     }
     
@@ -217,34 +244,36 @@ public class MTMathAtom: NSObject {
     /// Returns a copy of `self`.
     public func copy() -> MTMathAtom {
         switch self.type {
-            case .largeOperator:
-                return MTLargeOperator(self as? MTLargeOperator)
-            case .fraction:
-                return MTFraction(self as? MTFraction)
-            case .radical:
-                return MTRadical(self as? MTRadical)
-            case .style:
-                return MTMathStyle(self as? MTMathStyle)
-            case .inner:
-                return MTInner(self as? MTInner)
-            case .underline:
-                return MTUnderLine(self as? MTUnderLine)
-            case .overline:
-                return MTOverLine(self as? MTOverLine)
-            case .accent:
-                return MTAccent(self as? MTAccent)
-            case .space:
-                return MTMathSpace(self as? MTMathSpace)
-            case .color:
-                return MTMathColor(self as? MTMathColor)
-            case .textcolor:
-                return MTMathTextColor(self as? MTMathTextColor)
-            case .colorBox:
-                return MTMathColorbox(self as? MTMathColorbox)
-            case .table:
-                return MTMathTable(self as! MTMathTable)
-            default:
-                return MTMathAtom(self)
+        case .largeOperator:
+            return MTLargeOperator(self as? MTLargeOperator)
+        case .fraction:
+            return MTFraction(self as? MTFraction)
+        case .radical:
+            return MTRadical(self as? MTRadical)
+        case .style:
+            return MTMathStyle(self as? MTMathStyle)
+        case .inner:
+            return MTInner(self as? MTInner)
+        case .underline:
+            return MTUnderLine(self as? MTUnderLine)
+        case .overline:
+            return MTOverLine(self as? MTOverLine)
+        case .accent:
+            return MTAccent(self as? MTAccent)
+        case .space:
+            return MTMathSpace(self as? MTMathSpace)
+        case .color:
+            return MTMathColor(self as? MTMathColor)
+        case .textcolor:
+            return MTMathTextColor(self as? MTMathTextColor)
+        case .colorBox:
+            return MTMathColorbox(self as? MTMathColorbox)
+        case .boxed:
+            return MTMathBoxed(self as? MTMathBoxed)
+        case .table:
+            return MTMathTable(self as! MTMathTable)
+        default:
+            return MTMathAtom(self)
         }
     }
     
@@ -740,6 +769,36 @@ public class MTMathColorbox: MTMathAtom {
         let newColor = super.finalized as! MTMathColorbox
         newColor.innerList = newColor.innerList?.finalized
         return newColor
+    }
+}
+
+// MARK: - MTBoxed
+/** An atom representing an boxed element.
+ Note: None of the usual fields of the `MTMathAtom` apply even though this
+ class inherits from `MTMathAtom`. i.e. it is meaningless to have a value
+ in the nucleus, subscript or superscript fields. */
+public class MTMathBoxed: MTMathAtom {
+    public var innerList:MTMathList?
+
+    init(_ cbox: MTMathBoxed?) {
+        super.init(cbox)
+        self.type = .boxed
+        self.innerList = MTMathList(cbox?.innerList)
+    }
+
+    override init() {
+        super.init()
+        self.type = .boxed
+    }
+
+    public override var string: String {
+        "\\boxed{\(self.innerList!.string)}"
+    }
+
+    override public var finalized: MTMathAtom {
+        let atom = super.finalized as! MTMathBoxed
+        atom.innerList = atom.innerList?.finalized
+        return atom
     }
 }
 
