@@ -785,10 +785,8 @@ public class MTMathAtomFactory {
 
                 let spacer = MTMathAtom(type: .ordinary, value: "")
 
-                for i in 0..<table.cells.count {
-                    if table.cells[i].count >= 1 {
-                        table.cells[i][1].insert(spacer, at: 0)
-                    }
+                for i in 0..<table.cells.count where table.cells[i].count >= 1 {
+                    table.cells[i][1].insert(spacer, at: 0)
                 }
 
                 table.interRowAdditionalSpacing = 1

@@ -449,11 +449,11 @@ public struct MTMathListBuilder {
                     if let accent = atom as? MTAccent {
                         str += "\\\(MTMathAtomFactory.accentName(accent)!){\(mathListToString(accent.innerList!))}"
                     }
-                } else if atom.type == .largeOperator {
-                    let op = atom as! MTLargeOperator
-                    let command = MTMathAtomFactory.latexSymbolName(for: atom)
-                    let originalOp = MTMathAtomFactory.atom(forLatexSymbol: command!) as! MTLargeOperator
-                    str += "\\\(command!) "
+                } else if atom.type == .largeOperator,
+                          let op = atom as? MTLargeOperator,
+                          let command = MTMathAtomFactory.latexSymbolName(for: atom),
+                          let originalOp = MTMathAtomFactory.atom(forLatexSymbol: command) as? MTLargeOperator {
+                    str += "\\\(command) "
                     if originalOp.limits != op.limits {
                         if op.limits {
                             str += "\\limits "
@@ -779,8 +779,7 @@ public struct MTMathListBuilder {
             if atom?.type != .largeOperator {
                 let errorMessage = "Limits can only be applied to an operator."
                 self.setError(.invalidLimits, message: errorMessage)
-            } else {
-                let op = atom as! MTLargeOperator
+            } else if let op = atom as? MTLargeOperator {
                 op.limits = true
             }
             return true
@@ -788,8 +787,7 @@ public struct MTMathListBuilder {
             if atom?.type != .largeOperator {
                 let errorMessage = "No limits can only be applied to an operator."
                 self.setError(.invalidLimits, message: errorMessage)
-            } else {
-                let op = atom as! MTLargeOperator
+            } else if let op = atom as? MTLargeOperator {
                 op.limits = false
             }
             return true
@@ -1069,7 +1067,7 @@ public struct MTMathListBuilder {
         let singleChars = "{}$#%_| ,>;!\\"
         if self.hasCharacters {
             let char = self.getNextCharacter()
-            if let _ = singleChars.firstIndex(of: char) {
+            if singleChars.firstIndex(of: char) != nil {
                 return String(char)
             } else {
                 self.unlookCharacter()

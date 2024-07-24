@@ -25,9 +25,11 @@ let package = Package(
             dependencies: [],
             resources: [
                 .copy("mathFonts.bundle")
-            ]),
+            ]
+        ),
         .testTarget(
             name: "SwiftMathTests",
-            dependencies: ["SwiftMath"])
+            dependencies: ["SwiftMath"]
+        )
     ]
 )

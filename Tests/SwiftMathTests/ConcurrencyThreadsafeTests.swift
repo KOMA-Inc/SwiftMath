@@ -30,7 +30,7 @@ final class ConcurrencyThreadsafeTests: XCTestCase {
             }
         }
         executionGroup.notify(queue: .main) { [weak self] in
-            // print("All test cases completed: \(self?.testCount ?? 0)")
+             print("All test cases completed: \(self?.testCount ?? 0)")
         }
         executionGroup.wait()
     }

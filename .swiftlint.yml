@@ -1,0 +1,13 @@
+disabled_rules:
+    - identifier_name
+    - orphaned_doc_comment
+    - type_body_length
+    - implicit_getter
+    - switch_case_alignment
+    - cyclomatic_complexity
+    - function_body_length
+    - line_length
+    - file_length
+    - unused_setter_value
+    - valid_ibinspectable
+    - compiler_protocol_init

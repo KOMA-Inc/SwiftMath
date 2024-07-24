@@ -271,7 +271,11 @@ public class MTMathAtom: NSObject {
         case .boxed:
             return MTMathBoxed(self as? MTMathBoxed)
         case .table:
-            return MTMathTable(self as! MTMathTable)
+            if let self = self as? MTMathTable {
+                return MTMathTable(self)
+            } else {
+                return MTMathAtom(self)
+            }
         default:
             return MTMathAtom(self)
         }
@@ -395,7 +399,9 @@ public class MTFraction: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newFrac = super.finalized as! MTFraction
+        guard let newFrac = super.finalized as? MTFraction else {
+            return super.finalized
+        }
         newFrac.numerator = newFrac.numerator?.finalized
         newFrac.denominator = newFrac.denominator?.finalized
         return newFrac
@@ -445,7 +451,9 @@ public class MTRadical: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newRad = super.finalized as! MTRadical
+        guard let newRad = super.finalized as? MTRadical else {
+            return super.finalized
+        }
         newRad.radicand = newRad.radicand?.finalized
         newRad.degree = newRad.degree?.finalized
         return newRad
@@ -532,7 +540,9 @@ public class MTInner: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newInner = super.finalized as! MTInner
+        guard let newInner = super.finalized as? MTInner else {
+            return super.finalized
+        }
         newInner.innerList = newInner.innerList?.finalized
         return newInner
     }
@@ -567,7 +577,9 @@ public class MTUnderLine: MTMathAtom {
     public var innerList: MTMathList?
 
     override public var finalized: MTMathAtom {
-        let newUnderline = super.finalized as! MTUnderLine
+        guard let newUnderline = super.finalized as? MTUnderLine else {
+            return super.finalized
+        }
         newUnderline.innerList = newUnderline.innerList?.finalized
         return newUnderline
     }
@@ -590,7 +602,9 @@ public class MTAccent: MTMathAtom {
     public var innerList: MTMathList?
 
     override public var finalized: MTMathAtom {
-        let newAccent = super.finalized as! MTAccent
+        guard let newAccent = super.finalized as? MTAccent else {
+            return super.finalized
+        }
         newAccent.innerList = newAccent.innerList?.finalized
         return newAccent
     }
@@ -702,7 +716,9 @@ public class MTMathColor: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newColor = super.finalized as! MTMathColor
+        guard let newColor = super.finalized as? MTMathColor else {
+            return super.finalized
+        }
         newColor.innerList = newColor.innerList?.finalized
         return newColor
     }
@@ -734,7 +750,9 @@ public class MTMathTextColor: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newColor = super.finalized as! MTMathTextColor
+        guard let newColor = super.finalized as? MTMathTextColor else {
+            return super.finalized
+        }
         newColor.innerList = newColor.innerList?.finalized
         return newColor
     }
@@ -766,7 +784,9 @@ public class MTMathColorbox: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let newColor = super.finalized as! MTMathColorbox
+        guard let newColor = super.finalized as? MTMathColorbox else {
+            return super.finalized
+        }
         newColor.innerList = newColor.innerList?.finalized
         return newColor
     }
@@ -796,7 +816,9 @@ public class MTMathBoxed: MTMathAtom {
     }
 
     override public var finalized: MTMathAtom {
-        let atom = super.finalized as! MTMathBoxed
+        guard let atom = super.finalized as? MTMathBoxed else {
+            return super.finalized
+        }
         atom.innerList = atom.innerList?.finalized
         return atom
     }
@@ -837,7 +859,9 @@ public class MTMathTable: MTMathAtom {
     public var interRowAdditionalSpacing: CGFloat = 0
 
     override public var finalized: MTMathAtom {
-        let table = super.finalized as! MTMathTable
+        guard let table = super.finalized as? MTMathTable else {
+            return super.finalized
+        }
         for var row in table.cells {
             for i in 0..<row.count {
                 row[i] = row[i].finalized

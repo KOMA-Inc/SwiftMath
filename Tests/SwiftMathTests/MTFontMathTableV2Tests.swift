@@ -47,7 +47,7 @@ final class MTFontMathTableV2Tests: XCTestCase {
     func helperConcurrentMTFontMathTableV2(_ count: Int, mtfont: MTFontV2, in group: DispatchGroup, on queue: DispatchQueue) {
         let workitem = DispatchWorkItem {
             let mTable = mtfont.mathTable
-            let values = [
+            _ = [
                 mTable?.fractionNumeratorDisplayStyleShiftUp,
                 mTable?.fractionNumeratorShiftUp,
                 mTable?.fractionDenominatorDisplayStyleShiftDown,
@@ -64,7 +64,7 @@ final class MTFontMathTableV2Tests: XCTestCase {
             // print("\(Thread.isMainThread ? "main" : "global") completed .....")
             let mTable = mtfont.mathTable
             if count % 70 == 0 {
-                let values = [
+                _ = [
                     mTable?.fractionNumeratorDisplayStyleShiftUp,
                     mTable?.fractionNumeratorShiftUp,
                     mTable?.fractionDenominatorDisplayStyleShiftDown,

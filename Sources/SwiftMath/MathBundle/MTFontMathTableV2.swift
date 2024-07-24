@@ -24,8 +24,8 @@ internal class MTFontMathTableV2: MTFontMathTable {
         // disable all possible access to _mathTable in superclass!
     }
     override var _mathTable: NSDictionary? {
-        set { fatalError("\(#function) change to _mathTable \(mathFont.rawValue) not allowed.") }
         get { mTable }
+        set { fatalError("\(#function) change to _mathTable \(mathFont.rawValue) not allowed.") }
     }
     override var muUnit: CGFloat { fontSize/18 }
 

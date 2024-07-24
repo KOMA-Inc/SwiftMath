@@ -480,12 +480,13 @@ class MTTypesetter {
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let space = atom as! MTMathSpace
-                // add the desired space
-                currentPosition.x += space.space * styleFont.mathTable!.muUnit
-                // Since this is extra space, the desired interelement space between the prevAtom
-                // and the next node is still preserved. To avoid resetting the prevAtom and lastType
-                // we skip to the next node.
+                if let space = atom as? MTMathSpace {
+                    // add the desired space
+                    currentPosition.x += space.space * styleFont.mathTable!.muUnit
+                    // Since this is extra space, the desired interelement space between the prevAtom
+                    // and the next node is still preserved. To avoid resetting the prevAtom and lastType
+                    // we skip to the next node.
+                }
                 continue
 
             case .style:
@@ -493,10 +494,11 @@ class MTTypesetter {
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let style = atom as! MTMathStyle
-                self.style = style.style
-                // We need to preserve the prevNode for any interelement space changes.
-                // so we skip to the next node.
+                if let style = atom as? MTMathStyle {
+                    self.style = style.style
+                    // We need to preserve the prevNode for any interelement space changes.
+                    // so we skip to the next node.
+                }
                 continue
 
             case .color:
@@ -504,32 +506,39 @@ class MTTypesetter {
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let colorAtom = atom as! MTMathColor
-                let display = MTTypesetter.createLineForMathList(colorAtom.innerList, font: font, style: style)
-                display!.localTextColor = MTColor(fromHexString: colorAtom.colorString)
-                display!.position = currentPosition
-                currentPosition.x += display!.width
-                displayAtoms.append(display!)
+                guard let colorAtom = atom as? MTMathColor,
+                      let display = MTTypesetter.createLineForMathList(colorAtom.innerList, font: font, style: style) else {
+                    continue
+                }
+                display.localTextColor = MTColor(fromHexString: colorAtom.colorString)
+                display.position = currentPosition
+                currentPosition.x += display.width
+                displayAtoms.append(display)
 
             case .textcolor:
                 // stash the existing layout
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let colorAtom = atom as! MTMathTextColor
-                let display = MTTypesetter.createLineForMathList(colorAtom.innerList, font: font, style: style)
-                display!.localTextColor = MTColor(fromHexString: colorAtom.colorString)
+                guard let colorAtom = atom as? MTMathTextColor,
+                      let display = MTTypesetter.createLineForMathList(colorAtom.innerList, font: font, style: style) else {
+                    continue
+                }
 
-                if prevNode != nil {
-                    let subDisplay: MTDisplay = display!.subDisplays[0]
+                display.localTextColor = MTColor(fromHexString: colorAtom.colorString)
+
+                if let prevNode {
+                    let subDisplay: MTDisplay = display.subDisplays[0]
                     let subDisplayAtom = (subDisplay as? MTCTLineDisplay)!.atoms[0]
-                    let interElementSpace = self.getInterElementSpace(prevNode!.type, right: subDisplayAtom.type)
+                    let interElementSpace = self.getInterElementSpace(prevNode.type, right: subDisplayAtom.type)
                     if currentLine.length > 0 {
                         if interElementSpace > 0 {
                             // add a kerning of that space to the previous character
-                            currentLine.addAttribute(kCTKernAttributeName as NSAttributedString.Key,
-                                                     value: NSNumber(floatLiteral: interElementSpace),
-                                                     range: currentLine.mutableString.rangeOfComposedCharacterSequence(at: currentLine.length-1))
+                            currentLine.addAttribute(
+                                kCTKernAttributeName as NSAttributedString.Key,
+                                value: NSNumber(floatLiteral: interElementSpace),
+                                range: currentLine.mutableString.rangeOfComposedCharacterSequence(at: currentLine.length-1)
+                            )
                         }
                     } else {
                         // increase the space
@@ -537,47 +546,53 @@ class MTTypesetter {
                     }
                 }
 
-                display!.position = currentPosition
-                currentPosition.x += display!.width
-                displayAtoms.append(display!)
+                display.position = currentPosition
+                currentPosition.x += display.width
+                displayAtoms.append(display)
 
             case .colorBox:
                 // stash the existing layout
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let colorboxAtom =  atom as! MTMathColorbox
-                let display = MTTypesetter.createLineForMathList(colorboxAtom.innerList, font: font, style: style)
+                guard let colorboxAtom = atom as? MTMathColorbox,
+                      let display = MTTypesetter.createLineForMathList(colorboxAtom.innerList, font: font, style: style) else {
+                    continue
+                }
 
-                display!.localBackgroundColor = MTColor(fromHexString: colorboxAtom.colorString)
-                display!.position = currentPosition
-                currentPosition.x += display!.width
-                displayAtoms.append(display!)
+                display.localBackgroundColor = MTColor(fromHexString: colorboxAtom.colorString)
+                display.position = currentPosition
+                currentPosition.x += display.width
+                displayAtoms.append(display)
 
             case .boxed:
                 // stash the existing layout
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let colorboxAtom = atom as! MTMathBoxed
-                let display = MTTypesetter.createLineForMathList(colorboxAtom.innerList, font: font, style: style)
+                guard let colorboxAtom = atom as? MTMathBoxed,
+                        let display = MTTypesetter.createLineForMathList(colorboxAtom.innerList, font: font, style: style) else {
+                    continue
+                }
 
-                display!.needsBorder = true
+                display.needsBorder = true
 
                 currentPosition.x += 6
-                display!.position = currentPosition
-                currentPosition.x += display!.width + 6
-                display!.ascent += 3
-                display!.descent += 3
+                display.position = currentPosition
+                currentPosition.x += display.width + 6
+                display.ascent += 3
+                display.descent += 3
 
-                displayAtoms.append(display!)
+                displayAtoms.append(display)
 
             case .radical:
                 // stash the existing layout
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let rad = atom as! MTRadical
+                guard let rad = atom as? MTRadical else {
+                    continue
+                }
                 // Radicals are considered as Ord in rule 16.
                 self.addInterElementSpace(prevNode, currentType: .ordinary)
                 let displayRad = self.makeRadical(rad.radicand, range: rad.indexRange)
@@ -601,7 +616,9 @@ class MTTypesetter {
                 if currentLine.length > 0 {
                     self.addDisplayLine()
                 }
-                let frac = atom as! MTFraction?
+                guard let frac = atom as? MTFraction? else {
+                    continue
+                }
                 self.addInterElementSpace(prevNode, currentType: atom.type)
                 let display = self.makeFraction(frac)
                 displayAtoms.append(display!)
@@ -617,9 +634,11 @@ class MTTypesetter {
                     self.addDisplayLine()
                 }
                 self.addInterElementSpace(prevNode, currentType: atom.type)
-                let op = atom as! MTLargeOperator?
-                let display = self.makeLargeOp(op)
-                displayAtoms.append(display!)
+                guard let op = atom as? MTLargeOperator?,
+                      let display = self.makeLargeOp(op) else {
+                    continue
+                }
+                displayAtoms.append(display)
 
             case .inner:
                 // stash the existing layout
@@ -627,7 +646,9 @@ class MTTypesetter {
                     self.addDisplayLine()
                 }
                 self.addInterElementSpace(prevNode, currentType: atom.type)
-                let inner =  atom as! MTInner?
+                guard let inner = atom as? MTInner? else {
+                    continue
+                }
                 var display: MTDisplay?
                 if inner!.leftBoundary != nil || inner!.rightBoundary != nil {
                     display = self.makeLeftRight(inner)
@@ -651,7 +672,9 @@ class MTTypesetter {
                 self.addInterElementSpace(prevNode, currentType: .ordinary)
                 atom.type = .ordinary
 
-                let under = atom as! MTUnderLine?
+                guard let under = atom as? MTUnderLine? else {
+                    continue
+                }
                 let display = self.makeUnderline(under)
                 displayAtoms.append(display!)
                 currentPosition.x += display!.width
@@ -669,7 +692,9 @@ class MTTypesetter {
                 self.addInterElementSpace(prevNode, currentType: .ordinary)
                 atom.type = .ordinary
 
-                let over = atom as! MTOverLine?
+                guard let over = atom as? MTOverLine? else {
+                    continue
+                }
                 let display = self.makeOverline(over)
                 displayAtoms.append(display!)
                 currentPosition.x += display!.width
@@ -687,7 +712,9 @@ class MTTypesetter {
                 self.addInterElementSpace(prevNode, currentType: .ordinary)
                 atom.type = .ordinary
 
-                let accent = atom as! MTAccent?
+                guard let accent = atom as? MTAccent? else {
+                    continue
+                }
                 let display = self.makeAccent(accent)
                 displayAtoms.append(display!)
                 currentPosition.x += display!.width
@@ -706,7 +733,9 @@ class MTTypesetter {
                 self.addInterElementSpace(prevNode, currentType: .inner)
                 atom.type = .inner
 
-                let table = atom as! MTMathTable?
+                guard let table = atom as? MTMathTable? else {
+                    continue
+                }
                 let display = self.makeTable(table)
                 displayAtoms.append(display!)
                 currentPosition.x += display!.width
@@ -1238,7 +1267,7 @@ class MTTypesetter {
                         let maxOffsetDelta = prev!.fullAdvance - minDistance
                         // we can increase the offsets by at most max - min.
                         maxDelta = min(maxDelta, maxOffsetDelta - minOffsetDelta)
-                        minOffset = minOffset + minOffsetDelta
+                        minOffset += minOffsetDelta
                     }
                     offsetsRv.append(NSNumber(floatLiteral: minOffset))  // addObject:[NSNumber numberWithFloat:minOffset])
                     prev = part

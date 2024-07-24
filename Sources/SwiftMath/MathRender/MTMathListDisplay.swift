@@ -161,25 +161,32 @@ public class MTCTLineDisplay: MTDisplay {
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
-            let attrStr = attributedString!.mutableCopy() as! NSMutableAttributedString
+            guard let attributedString,
+                  let attrStr = attributedString.mutableCopy() as? NSMutableAttributedString else {
+                return
+            }
             let foregroundColor = NSAttributedString.Key(kCTForegroundColorAttributeName as String)
             attrStr.addAttribute(foregroundColor, value: self.textColor!.cgColor, range: NSRange(location: 0, length: attrStr.length))
             self.attributedString = attrStr
         }
-        get { super.textColor }
     }
 
     func computeDimensions(_ font: MTFont?) {
         let runs = CTLineGetGlyphRuns(line) as NSArray
         for obj in runs {
-            let run = obj as! CTRun?
-            let numGlyphs = CTRunGetGlyphCount(run!)
+            guard let run = obj as? CTRun?,
+                  let run else {
+                continue
+            }
+            let numGlyphs = CTRunGetGlyphCount(run)
             var glyphs = [CGGlyph]()
             glyphs.reserveCapacity(numGlyphs)
-            CTRunGetGlyphs(run!, CFRangeMake(0, numGlyphs), &glyphs)
-            let bounds = CTFontGetBoundingRectsForGlyphs(font!.ctFont, .horizontal, glyphs, nil, numGlyphs)
+            CTRunGetGlyphs(run, CFRangeMake(0, numGlyphs), &glyphs)
+            guard let font else { continue }
+            let bounds = CTFontGetBoundingRectsForGlyphs(font.ctFont, .horizontal, glyphs, nil, numGlyphs)
             let ascent = max(0, bounds.maxY - 0)
             // Descent is how much the line goes below the origin. However if the line is all above the origin, then descent can't be negative.
             let descent = max(0, 0 - bounds.minY)
@@ -242,6 +249,7 @@ public class MTMathListDisplay: MTDisplay {
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             for displayAtom in self.subDisplays {
@@ -252,7 +260,6 @@ public class MTMathListDisplay: MTDisplay {
                 }
             }
         }
-        get { super.textColor }
     }
 
     override public func draw(_ context: CGContext) {
@@ -326,18 +333,18 @@ public class MTFractionDisplay: MTDisplay {
     }
 
     override public var ascent: CGFloat {
-        set { super.ascent = newValue }
         get { numerator!.ascent + self.numeratorUp }
+        set { super.ascent = newValue }
     }
 
     override public var descent: CGFloat {
-        set { super.descent = newValue }
         get { denominator!.descent + self.denominatorDown }
+        set { super.descent = newValue }
     }
 
     override public var width: CGFloat {
-        set { super.width = newValue }
         get { max(numerator!.width, denominator!.width) }
+        set { super.width = newValue }
     }
 
     func updateDenominatorPosition() {
@@ -351,21 +358,21 @@ public class MTFractionDisplay: MTDisplay {
     }
 
     override var position: CGPoint {
+        get { super.position }
         set {
             super.position = newValue
             self.updateDenominatorPosition()
             self.updateNumeratorPosition()
         }
-        get { super.position }
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             numerator?.textColor = newValue
             denominator?.textColor = newValue
         }
-        get { super.textColor }
     }
 
     override public func draw(_ context: CGContext) {
@@ -407,20 +414,20 @@ class MTRadicalDisplay: MTDisplay {
     public fileprivate(set) var degree: MTMathListDisplay?
 
     override var position: CGPoint {
+        get { super.position }
         set {
             super.position = newValue
             self.updateRadicandPosition()
         }
-        get { super.position }
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             self.radicand?.textColor = newValue
             self.degree?.textColor = newValue
         }
-        get { super.textColor }
     }
 
     private var _radicalGlyph: MTDisplay?
@@ -545,13 +552,13 @@ class MTGlyphDisplay: MTDisplayDS {
     }
 
     override var ascent: CGFloat {
-        set { super.ascent = newValue }
         get { super.ascent - self.shiftDown }
+        set { super.ascent = newValue }
     }
 
     override var descent: CGFloat {
-        set { super.descent = newValue }
         get { super.descent + self.shiftDown }
+        set { super.descent = newValue }
     }
 }
 
@@ -594,13 +601,13 @@ class MTGlyphConstructionDisplay: MTDisplayDS {
     }
 
     override var ascent: CGFloat {
-        set { super.ascent = newValue }
         get { super.ascent - self.shiftDown }
+        set { super.ascent = newValue }
     }
 
     override var descent: CGFloat {
-        set { super.descent = newValue }
         get { super.descent + self.shiftDown }
+        set { super.descent = newValue }
     }
 
 }
@@ -643,7 +650,6 @@ class MTLargeOpLimitsDisplay: MTDisplay {
     }
 
     override var ascent: CGFloat {
-        set { super.ascent = newValue }
         get {
             if self.upperLimit != nil {
                 return nucleus!.ascent + extraPadding + self.upperLimit!.ascent + upperLimitGap + self.upperLimit!.descent
@@ -651,10 +657,10 @@ class MTLargeOpLimitsDisplay: MTDisplay {
                 return nucleus!.ascent
             }
         }
+        set { super.ascent = newValue }
     }
 
     override var descent: CGFloat {
-        set { super.descent = newValue }
         get {
             if self.lowerLimit != nil {
                 return nucleus!.descent + extraPadding + lowerLimitGap + self.lowerLimit!.descent + self.lowerLimit!.ascent
@@ -662,16 +668,17 @@ class MTLargeOpLimitsDisplay: MTDisplay {
                 return nucleus!.descent
             }
         }
+        set { super.descent = newValue }
     }
 
     override var position: CGPoint {
+        get { super.position }
         set {
             super.position = newValue
             self.updateLowerLimitPosition()
             self.updateUpperLimitPosition()
             self.updateNucleusPosition()
         }
-        get { super.position }
     }
 
     func updateLowerLimitPosition() {
@@ -680,8 +687,10 @@ class MTLargeOpLimitsDisplay: MTDisplay {
             // This is to make the positioning of the radical consistent with fractions and radicals
             // Move the starting point to below the nucleus leaving a gap of _lowerLimitGap and subtract
             // the ascent to to get the baseline. Also center and shift it to the left by _limitShift.
-            self.lowerLimit!.position = CGPoint(x: self.position.x - limitShift + (self.width - lowerLimit!.width)/2,y:
-                                                   self.position.y - nucleus!.descent - lowerLimitGap - self.lowerLimit!.ascent)
+            self.lowerLimit!.position = CGPoint(
+                x: self.position.x - limitShift + (self.width - lowerLimit!.width) / 2,
+                y: self.position.y - nucleus!.descent - lowerLimitGap - self.lowerLimit!.ascent
+            )
         }
     }
 
@@ -691,8 +700,10 @@ class MTLargeOpLimitsDisplay: MTDisplay {
             // This is to make the positioning of the radical consistent with fractions and radicals
             // Move the starting point to above the nucleus leaving a gap of _upperLimitGap and add
             // the descent to to get the baseline. Also center and shift it to the right by _limitShift.
-            self.upperLimit!.position = CGPoint(x: self.position.x + limitShift + (self.width - self.upperLimit!.width)/2,y:
-                                                   self.position.y + nucleus!.ascent + upperLimitGap + self.upperLimit!.descent)
+            self.upperLimit!.position = CGPoint(
+                x: self.position.x + limitShift + (self.width - self.upperLimit!.width) / 2,
+                y: self.position.y + nucleus!.ascent + upperLimitGap + self.upperLimit!.descent
+            )
         }
     }
 
@@ -702,13 +713,13 @@ class MTLargeOpLimitsDisplay: MTDisplay {
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             self.upperLimit?.textColor = newValue
             self.lowerLimit?.textColor = newValue
             nucleus?.textColor = newValue
         }
-        get { super.textColor }
     }
 
     override func draw(_ context: CGContext) {
@@ -742,19 +753,19 @@ class MTLineDisplay: MTDisplay {
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             inner?.textColor = newValue
         }
-        get { super.textColor }
     }
 
     override var position: CGPoint {
+        get { super.position }
         set {
             super.position = newValue
             self.updateInnerPosition()
         }
-        get { super.position }
     }
 
     override func draw(_ context: CGContext) {
@@ -806,20 +817,20 @@ class MTAccentDisplay: MTDisplay {
     }
 
     override var textColor: MTColor? {
+        get { super.textColor }
         set {
             super.textColor = newValue
             accentee?.textColor = newValue
             accent?.textColor = newValue
         }
-        get { super.textColor }
     }
 
     override var position: CGPoint {
+        get { super.position }
         set {
             super.position = newValue
             self.updateAccenteePosition()
         }
-        get { super.position }
     }
 
     func updateAccenteePosition() {

@@ -183,7 +183,7 @@ extension MTMathListIndex: Hashable {
 }
 
 extension MTMathListIndex: Equatable {
-    public static func ==(lhs: MTMathListIndex, rhs: MTMathListIndex) -> Bool {
+    public static func == (lhs: MTMathListIndex, rhs: MTMathListIndex) -> Bool {
         if lhs.atomIndex != rhs.atomIndex || lhs.subIndexType != rhs.subIndexType {
             return false
         }

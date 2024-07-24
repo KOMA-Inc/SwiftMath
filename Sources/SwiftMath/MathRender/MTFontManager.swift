@@ -25,13 +25,19 @@ public class MTFontManager {
     var nameToFontMap = [String: MTFont]()
 
     public func font(withName name: String, size: CGFloat) -> MTFont? {
-        var f = self.nameToFontMap[name]
-        if f == nil {
-            f = MTFont(fontWithName: name, size: size)
-            self.nameToFontMap[name] = f
+        var font = self.nameToFontMap[name]
+        if font == nil {
+            font = MTFont(fontWithName: name, size: size)
+            self.nameToFontMap[name] = font
         }
 
-        if f!.fontSize == size { return f } else { return f!.copy(withSize: size) }
+        guard let font else { return nil }
+
+        if font.fontSize == size {
+            return font
+        } else {
+            return font.copy(withSize: size)
+        }
     }
 
     public func latinModernFont(withSize size: CGFloat) -> MTFont? {

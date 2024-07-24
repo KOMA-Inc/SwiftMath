@@ -57,6 +57,7 @@ public class MTMathUILabel: MTView {
      is preferred to use `latex`.
      */
     public var mathList: MTMathList? {
+        get { _mathList }
         set {
             _mathList = newValue
             _error = nil
@@ -64,7 +65,6 @@ public class MTMathUILabel: MTView {
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _mathList }
     }
     private var _mathList: MTMathList?
 
@@ -74,6 +74,7 @@ public class MTMathUILabel: MTView {
      @see error */
     @IBInspectable
     public var latex: String {
+        get { _latex }
         set {
             _latex = newValue
             _error = nil
@@ -91,7 +92,6 @@ public class MTMathUILabel: MTView {
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _latex }
     }
     private var _latex = ""
 
@@ -104,38 +104,38 @@ public class MTMathUILabel: MTView {
 
     /** The MTFont to use for rendering. */
     public var font: MTFont? {
+        get { _font }
         set {
             guard newValue != nil else { return }
             _font = newValue
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _font }
     }
     private var _font: MTFont?
 
     /** Convenience method to just set the size of the font without changing the fontface. */
     @IBInspectable
     public var fontSize: CGFloat {
+        get { _fontSize }
         set {
             _fontSize = newValue
             let font = font?.copy(withSize: newValue)
             self.font = font  // also forces an update
         }
-        get { _fontSize }
     }
     private var _fontSize: CGFloat=0
 
     /** This sets the text color of the rendered math formula. The default color is black. */
     @IBInspectable
     public var textColor: MTColor? {
+        get { _textColor }
         set {
             guard newValue != nil else { return }
             _textColor = newValue
             self.displayList?.textColor = newValue
             self.setNeedsDisplay()
         }
-        get { _textColor }
     }
     private var _textColor: MTColor?
 
@@ -145,34 +145,34 @@ public class MTMathUILabel: MTView {
      */
     @IBInspectable
     public var contentInsets: MTEdgeInsets {
+        get { _contentInsets }
         set {
             _contentInsets = newValue
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _contentInsets }
     }
     private var _contentInsets = MTEdgeInsetsZero
 
     /** The Label mode for the label. The default mode is Display */
     public var labelMode: MTMathUILabelMode {
+        get { _labelMode }
         set {
             _labelMode = newValue
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _labelMode }
     }
     private var _labelMode = MTMathUILabelMode.display
 
     /** Horizontal alignment for the text. The default is align left. */
     public var textAlignment: MTTextAlignment {
+        get { _textAlignment }
         set {
             _textAlignment = newValue
             self.invalidateIntrinsicContentSize()
             self.setNeedsLayout()
         }
-        get { _textAlignment }
     }
     private var _textAlignment = MTTextAlignment.left
 

@@ -37,16 +37,15 @@ public final class MTFontV2: MTFont {
         super.rawMathTable = nil
     }
     override var defaultCGFont: CGFont! {
-        set { fatalError("\(#function): change to \(font.fontName) not allowed.") }
         get { _cgFont }
+        set { fatalError("\(#function): change to \(font.fontName) not allowed.") }
     }
     override var ctFont: CTFont! {
-        set { fatalError("\(#function): change to \(font.fontName) not allowed.") }
         get { _ctFont }
+        set { fatalError("\(#function): change to \(font.fontName) not allowed.") }
     }
     private let mtfontV2LockOnMathTable = NSLock()
     override var mathTable: MTFontMathTable? {
-        set { fatalError("\(#function): change to \(font.rawValue) not allowed.") }
         get {
             guard _mathTab == nil else { return _mathTab }
             // Note: lazy _mathTab initialization is now threadsafe.
@@ -57,10 +56,11 @@ public final class MTFontV2: MTFont {
             }
             return _mathTab
         }
+        set { fatalError("\(#function): change to \(font.rawValue) not allowed.") }
     }
     override var rawMathTable: NSDictionary? {
-        set { fatalError("\(#function): change to \(font.rawValue) not allowed.") }
         get { fatalError("\(#function): access to \(font.rawValue) not allowed.") }
+        set { fatalError("\(#function): change to \(font.rawValue) not allowed.") }
     }
     public override func copy(withSize size: CGFloat) -> MTFont {
         MTFontV2(font: font, size: size)
