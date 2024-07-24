@@ -196,33 +196,42 @@ public struct MTMathListBuilder {
                 }
             }
             // If there is a stop character, keep scanning 'til we find it
-            if stop != nil && char == stop! {
+            if let stop, char == stop {
                 return list
             }
             
             if char == "^" {
                 assert(!oneCharOnly, "This should have been handled before")
-                if (prevAtom == nil || prevAtom!.superScript != nil || !prevAtom!.isScriptAllowed()) {
-                    // If there is no previous atom, or if it already has a superscript
-                    // or if scripts are not allowed for it, then add an empty node.
+                if prevAtom == nil {
+                    // If there is no previous atom, then add an empty node.
                     prevAtom = MTMathAtom(type: .ordinary, value: "")
                     list.add(prevAtom!)
+                } else if let atom = prevAtom, (atom.superScript != nil || !atom.isScriptAllowed()) {
+                    // If atom already has a superscript
+                    // or if scripts are not allowed for it, then add an empty node.
+                    prevAtom = MTMathAtom(type: .ordinary, value: "")
+                    list.add(prevAtom)
                 }
+
                 // this is a superscript for the previous atom
                 // note: if the next char is the stopChar it will be consumed by the ^ and so it doesn't count as stop
-                prevAtom!.superScript = self.buildInternal(true)
+                prevAtom?.superScript = self.buildInternal(true)
                 continue
             } else if char == "_" {
                 assert(!oneCharOnly, "This should have been handled before")
-                if (prevAtom == nil || prevAtom!.subScript != nil || !prevAtom!.isScriptAllowed()) {
-                    // If there is no previous atom, or if it already has a subcript
-                    // or if scripts are not allowed for it, then add an empty node.
+                if prevAtom == nil {
+                    // If there is no previous atom, then add an empty node.
                     prevAtom = MTMathAtom(type: .ordinary, value: "")
                     list.add(prevAtom!)
+                } else if let atom = prevAtom, (atom.subScript != nil || !atom.isScriptAllowed()) {
+                    //If atom already has a subscript
+                    // or if scripts are not allowed for it, then add an empty node.
+                    prevAtom = MTMathAtom(type: .ordinary, value: "")
+                    list.add(prevAtom)
                 }
                 // this is a subscript for the previous atom
                 // note: if the next char is the stopChar it will be consumed by the _ and so it doesn't count as stop
-                prevAtom!.subScript = self.buildInternal(true)
+                prevAtom?.subScript = self.buildInternal(true)
                 continue
             } else if char == "{" {
                 // this puts us in a recursive routine, and sets oneCharOnly to false and no stop character
