@@ -11,7 +11,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "SwiftMath",
-            targets: ["SwiftMath"]),
+            targets: ["SwiftMath"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -28,6 +28,6 @@ let package = Package(
             ]),
         .testTarget(
             name: "SwiftMathTests",
-            dependencies: ["SwiftMath"]),
+            dependencies: ["SwiftMath"])
     ]
 )

@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 public class MTMathImage {
-    public var font: MTFont? = nil
+    public var font: MTFont?
     public let fontSize: CGFloat
     public let textColor: MTColor
 
@@ -24,7 +24,7 @@ public class MTMathImage {
     public let textAlignment: MTTextAlignment
 
     public var contentInsets: MTEdgeInsets = MTEdgeInsetsZero
-    
+
     public let latex: String
     private(set) var intrinsicContentSize = CGSize.zero
 
@@ -56,7 +56,7 @@ extension MTMathImage {
                 case .right:  textX = size.width - displayList.width - contentInsets.right
             }
             let availableHeight = size.height - contentInsets.bottom - contentInsets.top
-            
+
             // center things vertically
             var height = displayList.ascent + displayList.descent
             if height < fontSize/2 {
@@ -73,13 +73,13 @@ extension MTMathImage {
               let displayList = MTTypesetter.createLineForMathList(mathList, font: font, style: currentStyle) else {
             return (error, nil)
         }
-         
+
         intrinsicContentSize = intrinsicContentSize(displayList)
         displayList.textColor = textColor
-        
+
         let size = intrinsicContentSize
         layoutImage(size: size, displayList: displayList)
-        
+
         #if os(iOS)
             let renderer = UIGraphicsImageRenderer(size: size)
             let image = renderer.image { rendererContext in
@@ -91,7 +91,7 @@ extension MTMathImage {
             return (nil, image)
         #endif
         #if os(macOS)
-            let image = NSImage(size: size, flipped: false) { bounds in
+            let image = NSImage(size: size, flipped: false) { _ in
                 guard let context = NSGraphicsContext.current?.cgContext else { return false }
                 context.saveGState()
                 displayList.draw(context)

@@ -12,7 +12,7 @@ final class MathImageTests: XCTestCase {
     func safeImage(fileName: String, pngData: Data) {
         let imageFileURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("image-\(fileName).png"))
         try? pngData.write(to: imageFileURL, options: [.atomicWrite])
-        //print("\(#function) \(imageFileURL.path)")
+        // print("\(#function) \(imageFileURL.path)")
     }
     func testMathImageScript() throws {
         let latex = Latex.samples.randomElement()!
@@ -56,13 +56,13 @@ final class MathImageTests: XCTestCase {
         }
         print("check: \(URL(fileURLWithPath: NSTemporaryDirectory()).path) ==")
     }
-    
+
     private let executionQueue = DispatchQueue(label: "com.swiftmath.mathbundle", attributes: .concurrent)
     private let executionGroup = DispatchGroup()
-    
+
     let totalCases = 20
     var testCount = 0
-    
+
     func testConcurrentMathImageScript() throws {
         var latex: String { Latex.samples.randomElement()! }
         var mathfont: MathFont { MathFont.allCases.randomElement()! }
@@ -78,7 +78,7 @@ final class MathImageTests: XCTestCase {
         executionGroup.notify(queue: .main) { [weak self] in
             let fileUrl = URL(fileURLWithPath: NSTemporaryDirectory())
             print("\(self?.testCount)/\(self?.totalCases) completed, check \(fileUrl.path) ===")
-            XCTAssertEqual(self?.testCount,self?.totalCases)
+            XCTAssertEqual(self?.testCount, self?.totalCases)
         }
         executionGroup.wait()
     }

@@ -30,7 +30,7 @@ public final class MTFontV2: MTFont {
         self._ctFont = font.ctFont(withSize: size)
         self.unitsPerEm = self._ctFont.unitsPerEm
         super.init()
-        
+
         super.defaultCGFont = nil
         super.ctFont = nil
         super.mathTable = nil
@@ -49,7 +49,7 @@ public final class MTFontV2: MTFont {
         set { fatalError("\(#function): change to \(font.rawValue) not allowed.") }
         get {
             guard _mathTab == nil else { return _mathTab }
-            //Note: lazy _mathTab initialization is now threadsafe.
+            // Note: lazy _mathTab initialization is now threadsafe.
             mtfontV2LockOnMathTable.lock()
             defer { mtfontV2LockOnMathTable.unlock() }
             if _mathTab == nil {

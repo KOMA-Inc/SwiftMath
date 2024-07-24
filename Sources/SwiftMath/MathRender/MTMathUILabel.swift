@@ -25,7 +25,7 @@ public enum MTMathUILabelMode {
 /**
     Horizontal text alignment for `MTMathUILabel`.
  */
-public enum MTTextAlignment : UInt {
+public enum MTTextAlignment: UInt {
     /// Align left.
     case left
     /// Align center.
@@ -48,15 +48,15 @@ public enum MTTextAlignment : UInt {
  the `font` parameter.
  */
 @IBDesignable
-public class MTMathUILabel : MTView {
-        
+public class MTMathUILabel: MTView {
+
     /** The `MTMathList` to render. Setting this will remove any
      `latex` that has already been set. If `latex` has been set, this will
      return the parsed `MTMathList` if the `latex` parses successfully. Use this
      setting if the `MTMathList` has been programmatically constructed, otherwise it
      is preferred to use `latex`.
      */
-    public var mathList:MTMathList? {
+    public var mathList: MTMathList? {
         set {
             _mathList = newValue
             _error = nil
@@ -66,18 +66,18 @@ public class MTMathUILabel : MTView {
         }
         get { _mathList }
     }
-    private var _mathList:MTMathList?
-    
+    private var _mathList: MTMathList?
+
     /** The latex string to be displayed. Setting this will remove any `mathList` that
      has been set. If latex has not been set, this will return the latex output for the
      `mathList` that is set.
      @see error */
     @IBInspectable
-    public var latex:String {
+    public var latex: String {
         set {
             _latex = newValue
             _error = nil
-            var error : NSError? = nil
+            var error: NSError?
             _mathList = MTMathListBuilder.build(fromString: newValue, error: &error)
             if error != nil {
                 _mathList = nil
@@ -94,16 +94,16 @@ public class MTMathUILabel : MTView {
         get { _latex }
     }
     private var _latex = ""
-    
+
     /** This contains any error that occurred when parsing the latex. */
-    public var error:NSError? { _error }
-    private var _error:NSError?
-    
+    public var error: NSError? { _error }
+    private var _error: NSError?
+
     /** If true, if there is an error it displays the error message inline. Default true. */
     public var displayErrorInline = true
-    
+
     /** The MTFont to use for rendering. */
-    public var font:MTFont? {
+    public var font: MTFont? {
         set {
             guard newValue != nil else { return }
             _font = newValue
@@ -112,11 +112,11 @@ public class MTMathUILabel : MTView {
         }
         get { _font }
     }
-    private var _font:MTFont?
-    
+    private var _font: MTFont?
+
     /** Convenience method to just set the size of the font without changing the fontface. */
     @IBInspectable
-    public var fontSize:CGFloat {
+    public var fontSize: CGFloat {
         set {
             _fontSize = newValue
             let font = font?.copy(withSize: newValue)
@@ -124,11 +124,11 @@ public class MTMathUILabel : MTView {
         }
         get { _fontSize }
     }
-    private var _fontSize:CGFloat=0
-    
+    private var _fontSize: CGFloat=0
+
     /** This sets the text color of the rendered math formula. The default color is black. */
     @IBInspectable
-    public var textColor:MTColor? {
+    public var textColor: MTColor? {
         set {
             guard newValue != nil else { return }
             _textColor = newValue
@@ -137,14 +137,14 @@ public class MTMathUILabel : MTView {
         }
         get { _textColor }
     }
-    private var _textColor:MTColor?
-    
+    private var _textColor: MTColor?
+
     /** The minimum distance from the margin of the view to the rendered math. This value is
      `UIEdgeInsetsZero` by default. This is useful if you need some padding between the math and
      the border/background color. sizeThatFits: will have its returned size increased by these insets.
      */
     @IBInspectable
-    public var contentInsets:MTEdgeInsets {
+    public var contentInsets: MTEdgeInsets {
         set {
             _contentInsets = newValue
             self.invalidateIntrinsicContentSize()
@@ -153,9 +153,9 @@ public class MTMathUILabel : MTView {
         get { _contentInsets }
     }
     private var _contentInsets = MTEdgeInsetsZero
-    
+
     /** The Label mode for the label. The default mode is Display */
-    public var labelMode:MTMathUILabelMode {
+    public var labelMode: MTMathUILabelMode {
         set {
             _labelMode = newValue
             self.invalidateIntrinsicContentSize()
@@ -164,9 +164,9 @@ public class MTMathUILabel : MTView {
         get { _labelMode }
     }
     private var _labelMode = MTMathUILabelMode.display
-    
+
     /** Horizontal alignment for the text. The default is align left. */
-    public var textAlignment:MTTextAlignment {
+    public var textAlignment: MTTextAlignment {
         set {
             _textAlignment = newValue
             self.invalidateIntrinsicContentSize()
@@ -175,30 +175,30 @@ public class MTMathUILabel : MTView {
         get { _textAlignment }
     }
     private var _textAlignment = MTTextAlignment.left
-    
+
     /** The internal display of the MTMathUILabel. This is for advanced use only. */
     public var displayList: MTMathListDisplay? { _displayList }
-    private var _displayList:MTMathListDisplay?
-    
-    public var currentStyle:MTLineStyle {
+    private var _displayList: MTMathListDisplay?
+
+    public var currentStyle: MTLineStyle {
         switch _labelMode {
             case .display: return .display
             case .text: return .text
         }
     }
-    
+
     public var errorLabel: MTLabel?
-    
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
         self.initCommon()
     }
-    
+
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.initCommon()
     }
-    
+
     func initCommon() {
 #if os(macOS)
         self.layer?.isGeometryFlipped = true
@@ -214,7 +214,7 @@ public class MTMathUILabel : MTView {
         _displayList = nil
         displayErrorInline = true
         self.backgroundColor = MTColor.clear
-        
+
         _textColor = MTColor.black
         let label = MTLabel()
         self.errorLabel = label
@@ -227,7 +227,7 @@ public class MTMathUILabel : MTView {
         label.textColor = MTColor.red
         self.addSubview(label)
     }
-    
+
     override public func draw(_ dirtyRect: MTRect) {
         super.draw(dirtyRect)
         if self.mathList == nil { return }
@@ -238,7 +238,7 @@ public class MTMathUILabel : MTView {
         displayList!.draw(context)
         context.restoreGState()
     }
-    
+
     func _layoutSubviews() {
         if _mathList != nil {
             // print("Pre list = \(_mathList!)")
@@ -252,43 +252,43 @@ public class MTMathUILabel : MTView {
                 case .right:  textX = bounds.size.width - _displayList!.width - contentInsets.right
             }
             let availableHeight = bounds.size.height - contentInsets.bottom - contentInsets.top
-            
+
             // center things vertically
             var height = _displayList!.ascent + _displayList!.descent
             if height < fontSize/2 {
                 height = fontSize/2  // set height to half the font size
             }
             let textY = (availableHeight - height) / 2 + _displayList!.descent + contentInsets.bottom
-            _displayList!.position = CGPointMake(textX, textY)
+            _displayList!.position = CGPoint(x: textX, y: textY)
         } else {
             _displayList = nil
         }
         errorLabel?.frame = self.bounds
         self.setNeedsDisplay()
     }
-    
-    func _sizeThatFits(_ size:CGSize) -> CGSize {
+
+    func _sizeThatFits(_ size: CGSize) -> CGSize {
         guard _mathList != nil else { return size }
         var size = size
-        var displayList:MTMathListDisplay? = nil
+        var displayList: MTMathListDisplay?
         displayList = MTTypesetter.createLineForMathList(_mathList, font: font, style: currentStyle)
         size.width = displayList!.width + contentInsets.left + contentInsets.right
         size.height = displayList!.ascent + displayList!.descent + contentInsets.top + contentInsets.bottom
         return size
     }
-    
+
 #if os(macOS)
     func setNeedsDisplay() { self.needsDisplay = true }
     func setNeedsLayout() { self.needsLayout = true }
-    public override var fittingSize: CGSize { _sizeThatFits(CGSizeZero) }
+    public override var fittingSize: CGSize { _sizeThatFits(CGSize.zero) }
     override public var isFlipped: Bool { false }
     override public func layout() {
         self._layoutSubviews()
         super.layout()
     }
 #else
-    public override var intrinsicContentSize: CGSize { _sizeThatFits(CGSizeZero) }
+    public override var intrinsicContentSize: CGSize { _sizeThatFits(CGSize.zero) }
     override public func layoutSubviews() { _layoutSubviews() }
 #endif
-    
+
 }

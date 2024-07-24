@@ -22,7 +22,7 @@ public struct UnicodeSymbol {
     static let infinity                    = "\u{221E}" // \infty
     static let angle                       = "\u{2220}" // \angle
     static let degree                      = "\u{00B0}" // \circ
-    
+
     static let capitalGreekStart           = UInt32(0x0391)
     static let capitalGreekEnd             = UInt32(0x03A9)
     static let lowerGreekStart             = UInt32(0x03B1)
@@ -33,20 +33,20 @@ public struct UnicodeSymbol {
     static let greekLowerItalicStart       = UInt32(0x1D6FC)
     static let greekCapitalItalicStart     = UInt32(0x1D6E2)
     static let greekSymbolItalicStart      = UInt32(0x1D716)
-    
+
     static let mathCapitalBoldStart        = UInt32(0x1D400)
     static let mathLowerBoldStart          = UInt32(0x1D41A)
     static let greekCapitalBoldStart       = UInt32(0x1D6A8)
     static let greekLowerBoldStart         = UInt32(0x1D6C2)
     static let greekSymbolBoldStart        = UInt32(0x1D6DC)
     static let numberBoldStart             = UInt32(0x1D7CE)
-    
+
     static let mathCapitalBoldItalicStart  = UInt32(0x1D468)
     static let mathLowerBoldItalicStart    = UInt32(0x1D482)
     static let greekCapitalBoldItalicStart = UInt32(0x1D71C)
     static let greekLowerBoldItalicStart   = UInt32(0x1D736)
     static let greekSymbolBoldItalicStart  = UInt32(0x1D750)
-    
+
     static let mathCapitalScriptStart      = UInt32(0x1D49C)
     static let mathCapitalTTStart          = UInt32(0x1D670)
     static let mathLowerTTStart            = UInt32(0x1D68A)
@@ -62,28 +62,28 @@ public struct UnicodeSymbol {
 }
 
 extension Character {
-    
-    var utf32Char: UTF32Char { self.unicodeScalars.map { $0.value }.reduce(0, +) }
-    var isLowerEnglish : Bool { self >= "a" && self <= "z" }
-    var isUpperEnglish : Bool { self >= "A" && self <= "Z" }
-    var isNumber : Bool { self >= "0" && self <= "9" }
 
-    var isLowerGreek : Bool {
+    var utf32Char: UTF32Char { self.unicodeScalars.map { $0.value }.reduce(0, +) }
+    var isLowerEnglish: Bool { self >= "a" && self <= "z" }
+    var isUpperEnglish: Bool { self >= "A" && self <= "Z" }
+    var isNumber: Bool { self >= "0" && self <= "9" }
+
+    var isLowerGreek: Bool {
         let uch = self.utf32Char
         return uch >= UnicodeSymbol.lowerGreekStart && uch <= UnicodeSymbol.lowerGreekEnd
     }
 
-    var isCapitalGreek : Bool {
+    var isCapitalGreek: Bool {
         let uch = self.utf32Char
         return uch >= UnicodeSymbol.capitalGreekStart && uch <= UnicodeSymbol.capitalGreekEnd
     }
 
-    var greekSymbolOrder : UInt32? {
-        let greekSymbols : [UTF32Char] = [0x03F5, 0x03D1, 0x03F0, 0x03D5, 0x03F1, 0x03D6]
+    var greekSymbolOrder: UInt32? {
+        let greekSymbols: [UTF32Char] = [0x03F5, 0x03D1, 0x03F0, 0x03D5, 0x03F1, 0x03D6]
         let index = greekSymbols.firstIndex(of: self.utf32Char)
         if let pos = index { return UInt32(pos) }
         return nil
     }
 
-    var isGreekSymbol : Bool { self.greekSymbolOrder != nil }
+    var isGreekSymbol: Bool { self.greekSymbolOrder != nil }
 }

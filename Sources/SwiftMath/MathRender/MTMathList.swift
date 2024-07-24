@@ -48,19 +48,19 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
     case overline
     /// An accented atom - Accent in TeX
     case accent
-    
+
     // Atoms after this point do not support subscripts or superscripts
-    
+
     /// A left atom - Left & Right in TeX. We don't need two since we track boundaries separately.
     case boundary = 101
-    
+
     // Atoms after this are non-math TeX nodes that are still useful in math mode. They do not have
     // the usual structure.
-    
+
     /// Spacing between math atoms. This denotes both glue and kern for TeX. We do not
     /// distinguish between glue and kern.
     case space = 201
-    
+
     /// Denotes style changes during rendering.
     case style
     case color
@@ -69,21 +69,21 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
     case boxed
 
     // Atoms after this point are not part of TeX and do not have the usual structure.
-    
+
     /// An table atom. This atom does not exist in TeX. It is equivalent to the TeX command
     /// halign which is handled outside of the TeX math rendering engine. We bring it into our
     /// math typesetting to handle matrices and other tables.
     case table = 1001
-    
+
     func isNotBinaryOperator() -> Bool {
         switch self {
             case .binaryOperator, .relation, .open, .punctuation, .largeOperator: return true
             default: return false
         }
     }
-    
+
     func isScriptAllowed() -> Bool { self < .boundary }
-    
+
     // we want string representations to be capitalized
     public var description: String {
         switch self {
@@ -139,7 +139,7 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
             return "Table"
         }
     }
-    
+
     // comparable support
     public static func < (lhs: MTMathAtomType, rhs: MTMathAtomType) -> Bool { lhs.rawValue < rhs.rawValue }
 }
@@ -150,7 +150,7 @@ public enum MTMathAtomType: Int, CustomStringConvertible, Comparable {
  The fontstyle of the atom determines what style the character is rendered in. This only applies to atoms
  of type kMTMathAtomVariable and kMTMathAtomNumber. None of the other atom types change their font style.
  */
-public enum MTFontStyle:Int {
+public enum MTFontStyle: Int {
     /// The default latex rendering style. i.e. variables are italic and numbers are roman.
     case defaultStyle = 0,
     /// Roman font style i.e. \mathrm
@@ -205,22 +205,22 @@ public class MTMathAtom: NSObject {
             }
         }
     }
-    
+
     /** The nucleus of the atom. */
     public var nucleus: String = ""
-    
+
     /// The index range in the MTMathList this MTMathAtom tracks. This is used by the finalizing and preprocessing steps
     /// which fuse MTMathAtoms to track the position of the current MTMathAtom in the original list.
     public var indexRange = NSRange(location: 0, length: 0) // indexRange in list that this atom tracks:
-    
+
     /** The font style to be used for the atom. */
     var fontStyle: MTFontStyle = .defaultStyle
-    
+
     /// If this atom was formed by fusion of multiple atoms, then this stores the list of atoms that were fused to create this one.
     /// This is used in the finalizing and preprocessing steps.
     var fusedAtoms = [MTMathAtom]()
-    
-    init(_ atom:MTMathAtom?) {
+
+    init(_ atom: MTMathAtom?) {
         guard let atom = atom else { return }
         self.type = atom.type
         self.nucleus = atom.nucleus
@@ -230,17 +230,17 @@ public class MTMathAtom: NSObject {
         self.fontStyle = atom.fontStyle
         self.fusedAtoms = atom.fusedAtoms
     }
-    
+
     override init() { }
-    
+
     /// Factory function to create an atom with a given type and value.
     /// - parameter type: The type of the atom to instantiate.
     /// - parameter value: The value of the atoms nucleus. The value is ignored for fractions and radicals.
-    init(type:MTMathAtomType, value:String) {
+    init(type: MTMathAtomType, value: String) {
         self.type = type
         self.nucleus = type == .radical ? "" : value
     }
-    
+
     /// Returns a copy of `self`.
     public func copy() -> MTMathAtom {
         switch self.type {
@@ -276,7 +276,7 @@ public class MTMathAtom: NSObject {
             return MTMathAtom(self)
         }
     }
-    
+
     public override var description: String {
         var string = ""
         string += self.nucleus
@@ -288,16 +288,16 @@ public class MTMathAtom: NSObject {
         }
         return string
     }
-    
+
     /// Returns a finalized copy of the atom
     public var finalized: MTMathAtom {
-        let finalized : MTMathAtom = self.copy()
+        let finalized: MTMathAtom = self.copy()
         finalized.superScript = finalized.superScript?.finalized
         finalized.subScript = finalized.subScript?.finalized
         return finalized
     }
-    
-    public var string:String {
+
+    public var string: String {
         var str = self.nucleus
         if let superScript = self.superScript {
             str.append("^{\(superScript.string)}")
@@ -307,15 +307,15 @@ public class MTMathAtom: NSObject {
         }
         return str
     }
-    
+
     // Fuse the given atom with this one by combining their nucleii.
     func fuse(with atom: MTMathAtom) {
-        assert(self.subScript == nil, "Cannot fuse into an atom which has a subscript: \(self)");
-        assert(self.superScript == nil, "Cannot fuse into an atom which has a superscript: \(self)");
-        assert(atom.type == self.type, "Only atoms of the same type can be fused. \(self), \(atom)");
+        assert(self.subScript == nil, "Cannot fuse into an atom which has a subscript: \(self)")
+        assert(self.superScript == nil, "Cannot fuse into an atom which has a superscript: \(self)")
+        assert(atom.type == self.type, "Only atoms of the same type can be fused. \(self), \(atom)")
         guard self.subScript == nil, self.superScript == nil, self.type == atom.type
         else { print("Can't fuse these 2 atoms"); return }
-        
+
         // Update the fused atoms list
         if self.fusedAtoms.isEmpty {
             self.fusedAtoms.append(MTMathAtom(self))
@@ -325,26 +325,26 @@ public class MTMathAtom: NSObject {
         } else {
             self.fusedAtoms.append(atom)
         }
-        
+
         // Update nucleus:
         self.nucleus += atom.nucleus
-        
+
         // Update range:
         self.indexRange.length += atom.indexRange.length
-        
+
         // Update super/subscript:
         self.superScript = atom.superScript
         self.subScript = atom.subScript
     }
-    
+
     /** Returns true if this atom allows scripts (sub or super). */
     func isScriptAllowed() -> Bool { self.type.isScriptAllowed() }
-    
+
     func isNotBinaryOperator() -> Bool { self.type.isNotBinaryOperator() }
-    
+
 }
 
-func isNotBinaryOperator(_ prevNode:MTMathAtom?) -> Bool {
+func isNotBinaryOperator(_ prevNode: MTMathAtom?) -> Bool {
     guard let prevNode = prevNode else { return true }
     return prevNode.type.isNotBinaryOperator()
 }
@@ -357,7 +357,7 @@ public class MTFraction: MTMathAtom {
     public var rightDelimiter = ""
     public var numerator: MTMathList?
     public var denominator: MTMathList?
-    
+
     init(_ frac: MTFraction?) {
         super.init(frac)
         self.type = .fraction
@@ -369,13 +369,13 @@ public class MTFraction: MTMathAtom {
             self.rightDelimiter = frac.rightDelimiter
         }
     }
-    
-    init(hasRule rule:Bool = true) {
+
+    init(hasRule rule: Bool = true) {
         super.init()
         self.type = .fraction
         self.hasRule = rule
     }
-    
+
     override public var description: String {
         var string = self.hasRule ? "\\frac" : "\\atop"
         if !self.leftDelimiter.isEmpty {
@@ -393,40 +393,40 @@ public class MTFraction: MTMathAtom {
         }
         return string
     }
-    
+
     override public var finalized: MTMathAtom {
         let newFrac = super.finalized as! MTFraction
         newFrac.numerator = newFrac.numerator?.finalized
         newFrac.denominator = newFrac.denominator?.finalized
         return newFrac
     }
-    
+
 }
 
 // MARK: - MTRadical
 /** An atom of type radical (square root). */
 public class MTRadical: MTMathAtom {
     /// Denotes the term under the square root sign
-    public var radicand:  MTMathList?
-    
+    public var radicand: MTMathList?
+
     /// Denotes the degree of the radical, i.e. the value to the top left of the radical sign
     /// This can be null if there is no degree.
-    public var degree:  MTMathList?
-    
-    init(_ rad:MTRadical?) {
+    public var degree: MTMathList?
+
+    init(_ rad: MTRadical?) {
         super.init(rad)
         self.type = .radical
         self.radicand = MTMathList(rad?.radicand)
         self.degree = MTMathList(rad?.degree)
         self.nucleus = ""
     }
-    
+
     override init() {
         super.init()
         self.type = .radical
         self.nucleus = ""
     }
-    
+
     override public var description: String {
         var string = "\\sqrt"
         if self.degree != nil {
@@ -443,7 +443,7 @@ public class MTRadical: MTMathAtom {
         }
         return string
     }
-    
+
     override public var finalized: MTMathAtom {
         let newRad = super.finalized as! MTRadical
         newRad.radicand = newRad.radicand?.finalized
@@ -455,19 +455,19 @@ public class MTRadical: MTMathAtom {
 // MARK: - MTLargeOperator
 /** A `MTMathAtom` of type `kMTMathAtom.largeOperator`. */
 public class MTLargeOperator: MTMathAtom {
-    
+
     /** Indicates whether the limits (if present) should be displayed
      above and below the operator in display mode.  If limits is false
      then the limits (if present) are displayed like a regular subscript/superscript.
      */
     public var limits: Bool = false
-    
-    init(_ op:MTLargeOperator?) {
+
+    init(_ op: MTLargeOperator?) {
         super.init(op)
         self.type = .largeOperator
         self.limits = op!.limits
     }
-    
+
     init(value: String, limits: Bool) {
         super.init(type: .largeOperator, value: value)
         self.limits = limits
@@ -499,20 +499,20 @@ public class MTInner: MTMathAtom {
             }
         }
     }
-    
-    init(_ inner:MTInner?) {
+
+    init(_ inner: MTInner?) {
         super.init(inner)
         self.type = .inner
         self.innerList = MTMathList(inner?.innerList)
         self.leftBoundary = MTMathAtom(inner?.leftBoundary)
         self.rightBoundary = MTMathAtom(inner?.rightBoundary)
     }
-    
+
     override init() {
         super.init()
         self.type = .inner
     }
-    
+
     override public var description: String {
         var string = "\\inner"
         if self.leftBoundary != nil {
@@ -530,7 +530,7 @@ public class MTInner: MTMathAtom {
         }
         return string
     }
-    
+
     override public var finalized: MTMathAtom {
         let newInner = super.finalized as! MTInner
         newInner.innerList = newInner.innerList?.finalized
@@ -541,20 +541,20 @@ public class MTInner: MTMathAtom {
 // MARK: - MTOverLIne
 /** An atom with a line over the contained math list. */
 public class MTOverLine: MTMathAtom {
-    public var innerList:  MTMathList?
-    
+    public var innerList: MTMathList?
+
     override public var finalized: MTMathAtom {
         let newOverline = MTOverLine(self)
         newOverline.innerList = newOverline.innerList?.finalized
         return newOverline
     }
-    
+
     init(_ over: MTOverLine?) {
         super.init(over)
         self.type = .overline
         self.innerList = MTMathList(over!.innerList)
     }
-    
+
     override init() {
         super.init()
         self.type = .overline
@@ -564,20 +564,20 @@ public class MTOverLine: MTMathAtom {
 // MARK: - MTUnderLine
 /** An atom with a line under the contained math list. */
 public class MTUnderLine: MTMathAtom {
-    public var innerList:  MTMathList?
-    
+    public var innerList: MTMathList?
+
     override public var finalized: MTMathAtom {
         let newUnderline = super.finalized as! MTUnderLine
         newUnderline.innerList = newUnderline.innerList?.finalized
         return newUnderline
     }
-    
+
     init(_ under: MTUnderLine?) {
         super.init(under)
         self.type = .underline
         self.innerList = MTMathList(under?.innerList)
     }
-    
+
     override init() {
         super.init()
         self.type = .underline
@@ -587,20 +587,20 @@ public class MTUnderLine: MTMathAtom {
 // MARK: - MTAccent
 
 public class MTAccent: MTMathAtom {
-    public var innerList:  MTMathList?
-    
+    public var innerList: MTMathList?
+
     override public var finalized: MTMathAtom {
         let newAccent = super.finalized as! MTAccent
         newAccent.innerList = newAccent.innerList?.finalized
         return newAccent
     }
-    
+
     init(_ accent: MTAccent?) {
         super.init(accent)
         self.type = .accent
         self.innerList = MTMathList(accent?.innerList)
     }
-    
+
     init(value: String) {
         super.init()
         self.type = .accent
@@ -616,7 +616,7 @@ public class MTAccent: MTMathAtom {
 public class MTMathSpace: MTMathAtom {
     /** The amount of space represented by this object in mu units. */
     public var space: CGFloat = 0
-    
+
     /// Creates a new `MTMathSpace` with the given spacing.
     /// - parameter space: The amount of space in mu units.
     init(_ space: MTMathSpace?) {
@@ -624,8 +624,8 @@ public class MTMathSpace: MTMathAtom {
         self.type = .space
         self.space = space?.space ?? 0
     }
-    
-    init(space:CGFloat) {
+
+    init(space: CGFloat) {
         super.init()
         self.type = .space
         self.space = space
@@ -635,7 +635,7 @@ public class MTMathSpace: MTMathAtom {
 /**
  Styling of a line of math
  */
-public enum MTLineStyle:Int, Comparable {
+public enum MTLineStyle: Int, Comparable {
     /// Display style
     case display
     /// Text style (inline)
@@ -644,14 +644,14 @@ public enum MTLineStyle:Int, Comparable {
     case script
     /// Script script style (for scripts of scripts)
     case scriptOfScript
-    
+
     public func inc() -> MTLineStyle {
         let raw = self.rawValue + 1
         if let style = MTLineStyle(rawValue: raw) { return style }
         return .display
     }
-    
-    public var isNotScript:Bool { self < .script }
+
+    public var isNotScript: Bool { self < .script }
     public static func < (lhs: MTLineStyle, rhs: MTLineStyle) -> Bool { lhs.rawValue < rhs.rawValue }
 }
 
@@ -662,14 +662,14 @@ public enum MTLineStyle:Int, Comparable {
  in the nucleus, subscript or superscript fields. */
 public class MTMathStyle: MTMathAtom {
     public var style: MTLineStyle = .display
-    
-    init(_ style:MTMathStyle?) {
+
+    init(_ style: MTMathStyle?) {
         super.init(style)
         self.type = .style
         self.style = style!.style
     }
-    
-    init(style:MTLineStyle) {
+
+    init(style: MTLineStyle) {
         super.init()
         self.type = .style
         self.style = style
@@ -682,25 +682,25 @@ public class MTMathStyle: MTMathAtom {
  class inherits from `MTMathAtom`. i.e. it is meaningless to have a value
  in the nucleus, subscript or superscript fields. */
 public class MTMathColor: MTMathAtom {
-    public var colorString:String=""
-    public var innerList:MTMathList?
-    
+    public var colorString: String=""
+    public var innerList: MTMathList?
+
     init(_ color: MTMathColor?) {
         super.init(color)
         self.type = .color
         self.colorString = color?.colorString ?? ""
         self.innerList = MTMathList(color?.innerList)
     }
-    
+
     override init() {
         super.init()
         self.type = .color
     }
-    
+
     public override var string: String {
         "\\color{\(self.colorString)}{\(self.innerList!.string)}"
     }
-    
+
     override public var finalized: MTMathAtom {
         let newColor = super.finalized as! MTMathColor
         newColor.innerList = newColor.innerList?.finalized
@@ -714,8 +714,8 @@ public class MTMathColor: MTMathAtom {
  class inherits from `MTMathAtom`. i.e. it is meaningless to have a value
  in the nucleus, subscript or superscript fields. */
 public class MTMathTextColor: MTMathAtom {
-    public var colorString:String=""
-    public var innerList:MTMathList?
+    public var colorString: String=""
+    public var innerList: MTMathList?
 
     init(_ color: MTMathTextColor?) {
         super.init(color)
@@ -747,24 +747,24 @@ public class MTMathTextColor: MTMathAtom {
  in the nucleus, subscript or superscript fields. */
 public class MTMathColorbox: MTMathAtom {
     public var colorString=""
-    public var innerList:MTMathList?
-    
+    public var innerList: MTMathList?
+
     init(_ cbox: MTMathColorbox?) {
         super.init(cbox)
         self.type = .colorBox
         self.colorString = cbox?.colorString ?? ""
         self.innerList = MTMathList(cbox?.innerList)
     }
-    
+
     override init() {
         super.init()
         self.type = .colorBox
     }
-    
+
     public override var string: String {
         "\\colorbox{\(self.colorString)}{\(self.innerList!.string)}"
     }
-    
+
     override public var finalized: MTMathAtom {
         let newColor = super.finalized as! MTMathColorbox
         newColor.innerList = newColor.innerList?.finalized
@@ -778,7 +778,7 @@ public class MTMathColorbox: MTMathAtom {
  class inherits from `MTMathAtom`. i.e. it is meaningless to have a value
  in the nucleus, subscript or superscript fields. */
 public class MTMathBoxed: MTMathAtom {
-    public var innerList:MTMathList?
+    public var innerList: MTMathList?
 
     init(_ cbox: MTMathBoxed?) {
         super.init(cbox)
@@ -835,7 +835,7 @@ public class MTMathTable: MTMathAtom {
     /// Additional spacing between rows in jots (one jot is 0.3 times font size).
     /// If the additional spacing is 0, then normal row spacing is used are used.
     public var interRowAdditionalSpacing: CGFloat = 0
-    
+
     override public var finalized: MTMathAtom {
         let table = super.finalized as! MTMathTable
         for var row in table.cells {
@@ -845,14 +845,14 @@ public class MTMathTable: MTMathAtom {
         }
         return table
     }
-    
+
     init(environment: String?) {
         super.init()
         self.type = .table
         self.environment = environment ?? ""
     }
-    
-    init(_ table:MTMathTable) {
+
+    init(_ table: MTMathTable) {
         super.init(table)
         self.type = .table
         self.alignments = table.alignments
@@ -869,14 +869,14 @@ public class MTMathTable: MTMathAtom {
         }
         self.cells = cellCopy
     }
-    
+
     override init() {
         super.init()
         self.type = .table
     }
-    
+
     /// Set the value of a given cell. The table is automatically resized to contain this cell.
-    public func set(cell list: MTMathList, forRow row:Int, column:Int) {
+    public func set(cell list: MTMathList, forRow row: Int, column: Int) {
         if self.cells.count <= row {
             for _ in self.cells.count...row {
                 self.cells.append([])
@@ -890,7 +890,7 @@ public class MTMathTable: MTMathAtom {
         }
         self.cells[row][column] = list
     }
-    
+
     /// Set the alignment of a particular column. The table is automatically resized to
     /// contain this column and any new columns added have their alignment set to center.
     public func set(alignment: MTColumnAlignment, forColumn col: Int) {
@@ -899,10 +899,10 @@ public class MTMathTable: MTMathAtom {
                 self.alignments.append(MTColumnAlignment.center)
             }
         }
-        
+
         self.alignments[col] = alignment
     }
-    
+
     /// Gets the alignment for a given column. If the alignment is not specified it defaults
     /// to center.
     public func get(alignmentForColumn col: Int) -> MTColumnAlignment {
@@ -912,7 +912,7 @@ public class MTMathTable: MTMathAtom {
             return self.alignments[col]
         }
     }
-    
+
     public var numColumns: Int {
         var numberOfCols = 0
         for row in self.cells {
@@ -920,7 +920,7 @@ public class MTMathTable: MTMathAtom {
         }
         return numberOfCols
     }
-    
+
     public var numRows: Int { self.cells.count }
 }
 
@@ -941,9 +941,9 @@ extension MTMathList {
  
     Note: This class is for **advanced** usage only.
  */
-public class MTMathList : NSObject {
-    
-    init?(_ list:MTMathList?) {
+public class MTMathList: NSObject {
+
+    init?(_ list: MTMathList?) {
         guard let list = list else { return nil }
         for atom in list.atoms {
             self.atoms.append(atom.copy())
@@ -952,26 +952,26 @@ public class MTMathList : NSObject {
 
     /// A list of MathAtoms
     public var atoms = [MTMathAtom]()
-    
+
     /// Create a new math list as a final expression and update atoms
     /// by combining like atoms that occur together and converting unary operators to binary operators.
     /// This function does not modify the current MTMathList
     public var finalized: MTMathList {
         let finalizedList = MTMathList()
-        let zeroRange = NSMakeRange(0, 0)
-        
-        var prevNode: MTMathAtom? = nil
+        let zeroRange = NSRange(location: 0, length: 0)
+
+        var prevNode: MTMathAtom?
         for atom in self.atoms {
             let newNode = atom.finalized
-            
+
             if NSEqualRanges(zeroRange, atom.indexRange) {
                 let index = prevNode == nil ? 0 : prevNode!.indexRange.location + prevNode!.indexRange.length
-                newNode.indexRange = NSMakeRange(index, 1)
+                newNode.indexRange = NSRange(location: index, length: 1)
             }
-            
+
             switch newNode.type {
             case .binaryOperator:
-                if isNotBinaryOperator(prevNode)  {
+                if isNotBinaryOperator(prevNode) {
                     newNode.type = .unaryOperator
                 }
             case .relation, .punctuation, .close:
@@ -993,28 +993,28 @@ public class MTMathList : NSObject {
         }
         return finalizedList
     }
-    
+
     public init(atoms: [MTMathAtom]) {
         self.atoms.append(contentsOf: atoms)
     }
-    
+
     public init(atom: MTMathAtom) {
         self.atoms.append(atom)
     }
-    
+
     public override init() { super.init() }
-    
-    func NSParamException(_ param:Any?) {
+
+    func NSParamException(_ param: Any?) {
         if param == nil {
             NSException(name: NSExceptionName(rawValue: "Error"), reason: "Parameter cannot be nil").raise()
         }
     }
-    
-    func NSIndexException(_ array:[Any], index: Int) {
+
+    func NSIndexException(_ array: [Any], index: Int) {
         guard !array.indices.contains(index) else { return }
         NSException(name: NSExceptionName(rawValue: "Error"), reason: "Index \(index) out of bounds").raise()
     }
-    
+
     /// Add an atom to the end of the list.
     /// - parameter atom: The atom to be inserted. This cannot be `nil` and cannot have the type `kMTMathAtomBoundary`.
     /// - throws NSException if the atom is of type `kMTMathAtomBoundary`
@@ -1026,7 +1026,7 @@ public class MTMathList : NSObject {
             NSException(name: NSExceptionName(rawValue: "Error"), reason: "Cannot add atom of type \(atom.type.rawValue) into mathlist").raise()
         }
     }
-    
+
     /// Inserts an atom at the given index. If index is already occupied, the objects at index and beyond are
     /// shifted by adding 1 to their indices to make room. An insert to an `index` greater than the number of atoms
     /// is ignored.  Insertions of nil atoms is ignored.
@@ -1046,35 +1046,35 @@ public class MTMathList : NSObject {
             NSException(name: NSExceptionName(rawValue: "Error"), reason: "Cannot add atom of type \(atom.type.rawValue) into mathlist").raise()
         }
     }
-    
+
     /// Append the given list to the end of the current list.
     /// - parameter list: The list to append.
     public func append(_ list: MTMathList?) {
         guard let list = list else { return }
         self.atoms += list.atoms
     }
-    
+
     /** Removes the last atom from the math list. If there are no atoms in the list this does nothing. */
     public func removeLastAtom() {
         if !self.atoms.isEmpty {
             self.atoms.removeLast()
         }
     }
-    
+
     /// Removes the atom at the given index.
     /// - parameter index: The index at which to remove the atom. Must be less than the number of atoms
     /// in the list.
     public func removeAtom(at index: Int) {
-        NSIndexException(self.atoms, index:index)
+        NSIndexException(self.atoms, index: index)
         self.atoms.remove(at: index)
     }
-    
+
     /** Removes all the atoms within the given range. */
     public func removeAtoms(in range: ClosedRange<Int>) {
         NSIndexException(self.atoms, index: range.lowerBound)
         NSIndexException(self.atoms, index: range.upperBound)
         self.atoms.removeSubrange(range)
     }
-    
+
     func isAtomAllowed(_ atom: MTMathAtom?) -> Bool { atom?.type != .boundary }
 }

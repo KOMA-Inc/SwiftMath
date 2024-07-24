@@ -22,9 +22,9 @@ public struct MathImage {
     public var textAlignment: MTTextAlignment
 
     public var contentInsets: MTEdgeInsets = MTEdgeInsetsZero
-    
+
     public let latex: String
-    
+
     private(set) var intrinsicContentSize = CGSize.zero
 
     public init(latex: String, fontSize: CGFloat, textColor: MTColor, labelMode: MTMathUILabelMode = .display, textAlignment: MTTextAlignment = .center) {
@@ -55,7 +55,7 @@ extension MathImage {
                 case .right:  textX = size.width - displayList.width - contentInsets.right
             }
             let availableHeight = size.height - contentInsets.bottom - contentInsets.top
-            
+
             // center things vertically
             var height = displayList.ascent + displayList.descent
             if height < fontSize/2 {
@@ -77,7 +77,7 @@ extension MathImage {
 
         let size = intrinsicContentSize.regularized
         layoutImage(size: size, displayList: displayList)
-        
+
         #if os(iOS)
             let renderer = UIGraphicsImageRenderer(size: size)
             let image = renderer.image { rendererContext in
@@ -89,7 +89,7 @@ extension MathImage {
             return (nil, image)
         #endif
         #if os(macOS)
-            let image = NSImage(size: size, flipped: false) { bounds in
+            let image = NSImage(size: size, flipped: false) { _ in
                 guard let context = NSGraphicsContext.current?.cgContext else { return false }
                 context.saveGState()
                 displayList.draw(context)

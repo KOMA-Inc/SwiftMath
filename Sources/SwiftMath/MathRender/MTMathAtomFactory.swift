@@ -10,58 +10,58 @@ import Foundation
 
 /** A factory to create commonly used MTMathAtoms. */
 public class MTMathAtomFactory {
-    
+
     public static let aliases = [
-        "lnot" : "neg",
-        "land" : "wedge",
-        "lor" : "vee",
-        "ne" : "neq",
-        "le" : "leq",
-        "ge" : "geq",
-        "lbrace" : "{",
-        "rbrace" : "}",
-        "Vert" : "|",
-        "gets" : "leftarrow",
-        "to" : "rightarrow",
-        "iff" : "Longleftrightarrow",
-        "AA" : "angstrom"
+        "lnot": "neg",
+        "land": "wedge",
+        "lor": "vee",
+        "ne": "neq",
+        "le": "leq",
+        "ge": "geq",
+        "lbrace": "{",
+        "rbrace": "}",
+        "Vert": "|",
+        "gets": "leftarrow",
+        "to": "rightarrow",
+        "iff": "Longleftrightarrow",
+        "AA": "angstrom"
     ]
-    
+
     public static let delimiters = [
-        "." : "", // . means no delimiter
-        "(" : "(",
-        ")" : ")",
-        "[" : "[",
-        "]" : "]",
-        "<" : "\u{2329}",
-        ">" : "\u{232A}",
-        "/" : "/",
-        "\\" : "\\",
-        "|" : "|",
-        "lgroup" : "\u{27EE}",
-        "rgroup" : "\u{27EF}",
-        "||" : "\u{2016}",
-        "Vert" : "\u{2016}",
-        "vert" : "|",
-        "uparrow" : "\u{2191}",
-        "downarrow" : "\u{2193}",
-        "updownarrow" : "\u{2195}",
-        "Uparrow" : "\u{21D1}",
-        "Downarrow" : "\u{21D3}",
-        "Updownarrow" : "\u{21D5}",
-        "backslash" : "\\",
-        "rangle" : "\u{232A}",
-        "langle" : "\u{2329}",
-        "rbrace" : "}",
-        "}" : "}",
-        "{" : "{",
-        "lbrace" : "{",
-        "lceil" : "\u{2308}",
-        "rceil" : "\u{2309}",
-        "lfloor" : "\u{230A}",
-        "rfloor" : "\u{230B}"
+        ".": "", // . means no delimiter
+        "(": "(",
+        ")": ")",
+        "[": "[",
+        "]": "]",
+        "<": "\u{2329}",
+        ">": "\u{232A}",
+        "/": "/",
+        "\\": "\\",
+        "|": "|",
+        "lgroup": "\u{27EE}",
+        "rgroup": "\u{27EF}",
+        "||": "\u{2016}",
+        "Vert": "\u{2016}",
+        "vert": "|",
+        "uparrow": "\u{2191}",
+        "downarrow": "\u{2193}",
+        "updownarrow": "\u{2195}",
+        "Uparrow": "\u{21D1}",
+        "Downarrow": "\u{21D3}",
+        "Updownarrow": "\u{21D5}",
+        "backslash": "\\",
+        "rangle": "\u{232A}",
+        "langle": "\u{2329}",
+        "rbrace": "}",
+        "}": "}",
+        "{": "{",
+        "lbrace": "{",
+        "lceil": "\u{2308}",
+        "rceil": "\u{2309}",
+        "lfloor": "\u{230A}",
+        "rfloor": "\u{230B}"
     ]
-    
+
     private static let delimValueLock = NSLock()
     static var _delimValueToName = [String: String]()
     public static var delimValueToName: [String: String] {
@@ -87,24 +87,24 @@ public class MTMathAtomFactory {
         }
         return _delimValueToName
     }
-    
+
     public static let accents = [
-        "grave" :  "\u{0300}",
-        "acute" :  "\u{0301}",
-        "hat" :  "\u{0302}",  // In our implementation hat and widehat behave the same.
-        "tilde" :  "\u{0303}", // In our implementation tilde and widetilde behave the same.
-        "bar" :  "\u{0304}",
-        "breve" :  "\u{0306}",
-        "dot" :  "\u{0307}",
-        "ddot" :  "\u{0308}",
-        "check" :  "\u{030C}",
-        "vec" :  "\u{20D7}",
-        "widehat" :  "\u{0302}",
-        "widetilde" :  "\u{0303}"
+        "grave": "\u{0300}",
+        "acute": "\u{0301}",
+        "hat": "\u{0302}",  // In our implementation hat and widehat behave the same.
+        "tilde": "\u{0303}", // In our implementation tilde and widetilde behave the same.
+        "bar": "\u{0304}",
+        "breve": "\u{0306}",
+        "dot": "\u{0307}",
+        "ddot": "\u{0308}",
+        "check": "\u{030C}",
+        "vec": "\u{20D7}",
+        "widehat": "\u{0302}",
+        "widetilde": "\u{0303}"
     ]
-    
+
     private static let accentValueLock = NSLock()
-    static var _accentValueToName: [String: String]? = nil
+    static var _accentValueToName: [String: String]?
     public static var accentValueToName: [String: String] {
         if _accentValueToName == nil {
             var output = [String: String]()
@@ -129,280 +129,279 @@ public class MTMathAtomFactory {
         }
         return _accentValueToName!
     }
-    
-    static var supportedLatexSymbolNames:[String] {
+
+    static var supportedLatexSymbolNames: [String] {
         let commands = MTMathAtomFactory.supportedLatexSymbols
         return commands.keys.map { String($0) }
     }
-    
+
     static var supportedLatexSymbols: [String: MTMathAtom] = [
-        "square" : MTMathAtomFactory.placeholder(),
-        
+        "square": MTMathAtomFactory.placeholder(),
+
          // Greek characters
-        "alpha" : MTMathAtom(type: .variable, value: "\u{03B1}"),
-        "beta" : MTMathAtom(type: .variable, value: "\u{03B2}"),
-        "gamma" : MTMathAtom(type: .variable, value: "\u{03B3}"),
-        "delta" : MTMathAtom(type: .variable, value: "\u{03B4}"),
-        "varepsilon" : MTMathAtom(type: .variable, value: "\u{03B5}"),
-        "zeta" : MTMathAtom(type: .variable, value: "\u{03B6}"),
-        "eta" : MTMathAtom(type: .variable, value: "\u{03B7}"),
-        "theta" : MTMathAtom(type: .variable, value: "\u{03B8}"),
-        "iota" : MTMathAtom(type: .variable, value: "\u{03B9}"),
-        "kappa" : MTMathAtom(type: .variable, value: "\u{03BA}"),
-        "lambda" : MTMathAtom(type: .variable, value: "\u{03BB}"),
-        "mu" : MTMathAtom(type: .variable, value: "\u{03BC}"),
-        "nu" : MTMathAtom(type: .variable, value: "\u{03BD}"),
-        "xi" : MTMathAtom(type: .variable, value: "\u{03BE}"),
-        "omicron" : MTMathAtom(type: .variable, value: "\u{03BF}"),
-        "pi" : MTMathAtom(type: .variable, value: "\u{03C0}"),
-        "rho" : MTMathAtom(type: .variable, value: "\u{03C1}"),
-        "varsigma" : MTMathAtom(type: .variable, value: "\u{03C1}"),
-        "sigma" : MTMathAtom(type: .variable, value: "\u{03C3}"),
-        "tau" : MTMathAtom(type: .variable, value: "\u{03C4}"),
-        "upsilon" : MTMathAtom(type: .variable, value: "\u{03C5}"),
-        "varphi" : MTMathAtom(type: .variable, value: "\u{03C6}"),
-        "chi" : MTMathAtom(type: .variable, value: "\u{03C7}"),
-        "psi" : MTMathAtom(type: .variable, value: "\u{03C8}"),
-        "omega" : MTMathAtom(type: .variable, value: "\u{03C9}"),
+        "alpha": MTMathAtom(type: .variable, value: "\u{03B1}"),
+        "beta": MTMathAtom(type: .variable, value: "\u{03B2}"),
+        "gamma": MTMathAtom(type: .variable, value: "\u{03B3}"),
+        "delta": MTMathAtom(type: .variable, value: "\u{03B4}"),
+        "varepsilon": MTMathAtom(type: .variable, value: "\u{03B5}"),
+        "zeta": MTMathAtom(type: .variable, value: "\u{03B6}"),
+        "eta": MTMathAtom(type: .variable, value: "\u{03B7}"),
+        "theta": MTMathAtom(type: .variable, value: "\u{03B8}"),
+        "iota": MTMathAtom(type: .variable, value: "\u{03B9}"),
+        "kappa": MTMathAtom(type: .variable, value: "\u{03BA}"),
+        "lambda": MTMathAtom(type: .variable, value: "\u{03BB}"),
+        "mu": MTMathAtom(type: .variable, value: "\u{03BC}"),
+        "nu": MTMathAtom(type: .variable, value: "\u{03BD}"),
+        "xi": MTMathAtom(type: .variable, value: "\u{03BE}"),
+        "omicron": MTMathAtom(type: .variable, value: "\u{03BF}"),
+        "pi": MTMathAtom(type: .variable, value: "\u{03C0}"),
+        "rho": MTMathAtom(type: .variable, value: "\u{03C1}"),
+        "varsigma": MTMathAtom(type: .variable, value: "\u{03C1}"),
+        "sigma": MTMathAtom(type: .variable, value: "\u{03C3}"),
+        "tau": MTMathAtom(type: .variable, value: "\u{03C4}"),
+        "upsilon": MTMathAtom(type: .variable, value: "\u{03C5}"),
+        "varphi": MTMathAtom(type: .variable, value: "\u{03C6}"),
+        "chi": MTMathAtom(type: .variable, value: "\u{03C7}"),
+        "psi": MTMathAtom(type: .variable, value: "\u{03C8}"),
+        "omega": MTMathAtom(type: .variable, value: "\u{03C9}"),
         // We mark the following greek chars as ordinary so that we don't try
         // to automatically italicize them as we do with variables.
         // These characters fall outside the rules of italicization that we have defined.
-        "epsilon" : MTMathAtom(type: .ordinary, value: "\u{0001D716}"),
-        "vartheta" : MTMathAtom(type: .ordinary, value: "\u{0001D717}"),
-        "phi" : MTMathAtom(type: .ordinary, value: "\u{0001D719}"),
-        "varrho" : MTMathAtom(type: .ordinary, value: "\u{0001D71A}"),
-        "varpi" : MTMathAtom(type: .ordinary, value: "\u{0001D71B}"),
+        "epsilon": MTMathAtom(type: .ordinary, value: "\u{0001D716}"),
+        "vartheta": MTMathAtom(type: .ordinary, value: "\u{0001D717}"),
+        "phi": MTMathAtom(type: .ordinary, value: "\u{0001D719}"),
+        "varrho": MTMathAtom(type: .ordinary, value: "\u{0001D71A}"),
+        "varpi": MTMathAtom(type: .ordinary, value: "\u{0001D71B}"),
 
         // Capital greek characters
-        "Gamma" : MTMathAtom(type: .variable, value: "\u{0393}"),
-        "Delta" : MTMathAtom(type: .variable, value: "\u{0394}"),
-        "Theta" : MTMathAtom(type: .variable, value: "\u{0398}"),
-        "Lambda" : MTMathAtom(type: .variable, value: "\u{039B}"),
-        "Xi" : MTMathAtom(type: .variable, value: "\u{039E}"),
-        "Pi" : MTMathAtom(type: .variable, value: "\u{03A0}"),
-        "Sigma" : MTMathAtom(type: .variable, value: "\u{03A3}"),
-        "Upsilon" : MTMathAtom(type: .variable, value: "\u{03A5}"),
-        "Phi" : MTMathAtom(type: .variable, value: "\u{03A6}"),
-        "Psi" : MTMathAtom(type: .variable, value: "\u{03A8}"),
-        "Omega" : MTMathAtom(type: .variable, value: "\u{03A9}"),
+        "Gamma": MTMathAtom(type: .variable, value: "\u{0393}"),
+        "Delta": MTMathAtom(type: .variable, value: "\u{0394}"),
+        "Theta": MTMathAtom(type: .variable, value: "\u{0398}"),
+        "Lambda": MTMathAtom(type: .variable, value: "\u{039B}"),
+        "Xi": MTMathAtom(type: .variable, value: "\u{039E}"),
+        "Pi": MTMathAtom(type: .variable, value: "\u{03A0}"),
+        "Sigma": MTMathAtom(type: .variable, value: "\u{03A3}"),
+        "Upsilon": MTMathAtom(type: .variable, value: "\u{03A5}"),
+        "Phi": MTMathAtom(type: .variable, value: "\u{03A6}"),
+        "Psi": MTMathAtom(type: .variable, value: "\u{03A8}"),
+        "Omega": MTMathAtom(type: .variable, value: "\u{03A9}"),
 
         // Open
-        "lceil" : MTMathAtom(type: .open, value: "\u{2308}"),
-        "lfloor" : MTMathAtom(type: .open, value: "\u{230A}"),
-        "langle" : MTMathAtom(type: .open, value: "\u{27E8}"),
-        "lgroup" : MTMathAtom(type: .open, value: "\u{27EE}"),
+        "lceil": MTMathAtom(type: .open, value: "\u{2308}"),
+        "lfloor": MTMathAtom(type: .open, value: "\u{230A}"),
+        "langle": MTMathAtom(type: .open, value: "\u{27E8}"),
+        "lgroup": MTMathAtom(type: .open, value: "\u{27EE}"),
 
         // Close
-        "rceil" : MTMathAtom(type: .close, value: "\u{2309}"),
-        "rfloor" : MTMathAtom(type: .close, value: "\u{230B}"),
-        "rangle" : MTMathAtom(type: .close, value: "\u{27E9}"),
-        "rgroup" : MTMathAtom(type: .close, value: "\u{27EF}"),
+        "rceil": MTMathAtom(type: .close, value: "\u{2309}"),
+        "rfloor": MTMathAtom(type: .close, value: "\u{230B}"),
+        "rangle": MTMathAtom(type: .close, value: "\u{27E9}"),
+        "rgroup": MTMathAtom(type: .close, value: "\u{27EF}"),
 
         // Arrows
-        "leftarrow" : MTMathAtom(type: .relation, value: "\u{2190}"),
-        "uparrow" : MTMathAtom(type: .relation, value: "\u{2191}"),
-        "rightarrow" : MTMathAtom(type: .relation, value: "\u{2192}"),
-        "downarrow" : MTMathAtom(type: .relation, value: "\u{2193}"),
-        "leftrightarrow" : MTMathAtom(type: .relation, value: "\u{2194}"),
-        "updownarrow" : MTMathAtom(type: .relation, value: "\u{2195}"),
-        "nwarrow" : MTMathAtom(type: .relation, value: "\u{2196}"),
-        "nearrow" : MTMathAtom(type: .relation, value: "\u{2197}"),
-        "searrow" : MTMathAtom(type: .relation, value: "\u{2198}"),
-        "swarrow" : MTMathAtom(type: .relation, value: "\u{2199}"),
-        "mapsto" : MTMathAtom(type: .relation, value: "\u{21A6}"),
-        "Leftarrow" : MTMathAtom(type: .relation, value: "\u{21D0}"),
-        "Uparrow" : MTMathAtom(type: .relation, value: "\u{21D1}"),
-        "Rightarrow" : MTMathAtom(type: .relation, value: "\u{21D2}"),
-        "Downarrow" : MTMathAtom(type: .relation, value: "\u{21D3}"),
-        "Leftrightarrow" : MTMathAtom(type: .relation, value: "\u{21D4}"),
-        "Updownarrow" : MTMathAtom(type: .relation, value: "\u{21D5}"),
-        "longleftarrow" : MTMathAtom(type: .relation, value: "\u{27F5}"),
-        "longrightarrow" : MTMathAtom(type: .relation, value: "\u{27F6}"),
-        "longleftrightarrow" : MTMathAtom(type: .relation, value: "\u{27F7}"),
-        "Longleftarrow" : MTMathAtom(type: .relation, value: "\u{27F8}"),
-        "Longrightarrow" : MTMathAtom(type: .relation, value: "\u{27F9}"),
-        "Longleftrightarrow" : MTMathAtom(type: .relation, value: "\u{27FA}"),
-
+        "leftarrow": MTMathAtom(type: .relation, value: "\u{2190}"),
+        "uparrow": MTMathAtom(type: .relation, value: "\u{2191}"),
+        "rightarrow": MTMathAtom(type: .relation, value: "\u{2192}"),
+        "downarrow": MTMathAtom(type: .relation, value: "\u{2193}"),
+        "leftrightarrow": MTMathAtom(type: .relation, value: "\u{2194}"),
+        "updownarrow": MTMathAtom(type: .relation, value: "\u{2195}"),
+        "nwarrow": MTMathAtom(type: .relation, value: "\u{2196}"),
+        "nearrow": MTMathAtom(type: .relation, value: "\u{2197}"),
+        "searrow": MTMathAtom(type: .relation, value: "\u{2198}"),
+        "swarrow": MTMathAtom(type: .relation, value: "\u{2199}"),
+        "mapsto": MTMathAtom(type: .relation, value: "\u{21A6}"),
+        "Leftarrow": MTMathAtom(type: .relation, value: "\u{21D0}"),
+        "Uparrow": MTMathAtom(type: .relation, value: "\u{21D1}"),
+        "Rightarrow": MTMathAtom(type: .relation, value: "\u{21D2}"),
+        "Downarrow": MTMathAtom(type: .relation, value: "\u{21D3}"),
+        "Leftrightarrow": MTMathAtom(type: .relation, value: "\u{21D4}"),
+        "Updownarrow": MTMathAtom(type: .relation, value: "\u{21D5}"),
+        "longleftarrow": MTMathAtom(type: .relation, value: "\u{27F5}"),
+        "longrightarrow": MTMathAtom(type: .relation, value: "\u{27F6}"),
+        "longleftrightarrow": MTMathAtom(type: .relation, value: "\u{27F7}"),
+        "Longleftarrow": MTMathAtom(type: .relation, value: "\u{27F8}"),
+        "Longrightarrow": MTMathAtom(type: .relation, value: "\u{27F9}"),
+        "Longleftrightarrow": MTMathAtom(type: .relation, value: "\u{27FA}"),
 
         // Relations
-        "leq" : MTMathAtom(type: .relation, value: UnicodeSymbol.lessEqual),
-        "geq" : MTMathAtom(type: .relation, value: UnicodeSymbol.greaterEqual),
-        "neq" : MTMathAtom(type: .relation, value: UnicodeSymbol.notEqual),
-        "in" : MTMathAtom(type: .relation, value: "\u{2208}"),
-        "notin" : MTMathAtom(type: .relation, value: "\u{2209}"),
-        "ni" : MTMathAtom(type: .relation, value: "\u{220B}"),
-        "propto" : MTMathAtom(type: .relation, value: "\u{221D}"),
-        "mid" : MTMathAtom(type: .relation, value: "\u{2223}"),
-        "parallel" : MTMathAtom(type: .relation, value: "\u{2225}"),
-        "sim" : MTMathAtom(type: .relation, value: "\u{223C}"),
-        "simeq" : MTMathAtom(type: .relation, value: "\u{2243}"),
-        "cong" : MTMathAtom(type: .relation, value: "\u{2245}"),
-        "approx" : MTMathAtom(type: .relation, value: "\u{2248}"),
-        "asymp" : MTMathAtom(type: .relation, value: "\u{224D}"),
-        "doteq" : MTMathAtom(type: .relation, value: "\u{2250}"),
-        "equiv" : MTMathAtom(type: .relation, value: "\u{2261}"),
-        "gg" : MTMathAtom(type: .relation, value: "\u{226B}"),
-        "ll" : MTMathAtom(type: .relation, value: "\u{226A}"),
-        "prec" : MTMathAtom(type: .relation, value: "\u{227A}"),
-        "succ" : MTMathAtom(type: .relation, value: "\u{227B}"),
-        "subset" : MTMathAtom(type: .relation, value: "\u{2282}"),
-        "supset" : MTMathAtom(type: .relation, value: "\u{2283}"),
-        "subseteq" : MTMathAtom(type: .relation, value: "\u{2286}"),
-        "supseteq" : MTMathAtom(type: .relation, value: "\u{2287}"),
-        "sqsubset" : MTMathAtom(type: .relation, value: "\u{228F}"),
-        "sqsupset" : MTMathAtom(type: .relation, value: "\u{2290}"),
-        "sqsubseteq" : MTMathAtom(type: .relation, value: "\u{2291}"),
-        "sqsupseteq" : MTMathAtom(type: .relation, value: "\u{2292}"),
-        "models" : MTMathAtom(type: .relation, value: "\u{22A7}"),
-        "perp" : MTMathAtom(type: .relation, value: "\u{27C2}"),
+        "leq": MTMathAtom(type: .relation, value: UnicodeSymbol.lessEqual),
+        "geq": MTMathAtom(type: .relation, value: UnicodeSymbol.greaterEqual),
+        "neq": MTMathAtom(type: .relation, value: UnicodeSymbol.notEqual),
+        "in": MTMathAtom(type: .relation, value: "\u{2208}"),
+        "notin": MTMathAtom(type: .relation, value: "\u{2209}"),
+        "ni": MTMathAtom(type: .relation, value: "\u{220B}"),
+        "propto": MTMathAtom(type: .relation, value: "\u{221D}"),
+        "mid": MTMathAtom(type: .relation, value: "\u{2223}"),
+        "parallel": MTMathAtom(type: .relation, value: "\u{2225}"),
+        "sim": MTMathAtom(type: .relation, value: "\u{223C}"),
+        "simeq": MTMathAtom(type: .relation, value: "\u{2243}"),
+        "cong": MTMathAtom(type: .relation, value: "\u{2245}"),
+        "approx": MTMathAtom(type: .relation, value: "\u{2248}"),
+        "asymp": MTMathAtom(type: .relation, value: "\u{224D}"),
+        "doteq": MTMathAtom(type: .relation, value: "\u{2250}"),
+        "equiv": MTMathAtom(type: .relation, value: "\u{2261}"),
+        "gg": MTMathAtom(type: .relation, value: "\u{226B}"),
+        "ll": MTMathAtom(type: .relation, value: "\u{226A}"),
+        "prec": MTMathAtom(type: .relation, value: "\u{227A}"),
+        "succ": MTMathAtom(type: .relation, value: "\u{227B}"),
+        "subset": MTMathAtom(type: .relation, value: "\u{2282}"),
+        "supset": MTMathAtom(type: .relation, value: "\u{2283}"),
+        "subseteq": MTMathAtom(type: .relation, value: "\u{2286}"),
+        "supseteq": MTMathAtom(type: .relation, value: "\u{2287}"),
+        "sqsubset": MTMathAtom(type: .relation, value: "\u{228F}"),
+        "sqsupset": MTMathAtom(type: .relation, value: "\u{2290}"),
+        "sqsubseteq": MTMathAtom(type: .relation, value: "\u{2291}"),
+        "sqsupseteq": MTMathAtom(type: .relation, value: "\u{2292}"),
+        "models": MTMathAtom(type: .relation, value: "\u{22A7}"),
+        "perp": MTMathAtom(type: .relation, value: "\u{27C2}"),
 
         // operators
-        "times" : MTMathAtomFactory.times(),
-        "div"   : MTMathAtomFactory.divide(),
-        "pm"    : MTMathAtom(type: .binaryOperator, value: "\u{00B1}"),
-        "dagger" : MTMathAtom(type: .binaryOperator, value: "\u{2020}"),
-        "ddagger" : MTMathAtom(type: .binaryOperator, value: "\u{2021}"),
-        "mp"    : MTMathAtom(type: .binaryOperator, value: "\u{2213}"),
-        "setminus" : MTMathAtom(type: .binaryOperator, value: "\u{2216}"),
-        "ast"   : MTMathAtom(type: .binaryOperator, value: "\u{2217}"),
-        "circ"  : MTMathAtom(type: .binaryOperator, value: "\u{2218}"),
-        "bullet" : MTMathAtom(type: .binaryOperator, value: "\u{2219}"),
-        "wedge" : MTMathAtom(type: .binaryOperator, value: "\u{2227}"),
-        "vee" : MTMathAtom(type: .binaryOperator, value: "\u{2228}"),
-        "cap" : MTMathAtom(type: .binaryOperator, value: "\u{2229}"),
-        "cup" : MTMathAtom(type: .binaryOperator, value: "\u{222A}"),
-        "wr" : MTMathAtom(type: .binaryOperator, value: "\u{2240}"),
-        "uplus" : MTMathAtom(type: .binaryOperator, value: "\u{228E}"),
-        "sqcap" : MTMathAtom(type: .binaryOperator, value: "\u{2293}"),
-        "sqcup" : MTMathAtom(type: .binaryOperator, value: "\u{2294}"),
-        "oplus" : MTMathAtom(type: .binaryOperator, value: "\u{2295}"),
-        "ominus" : MTMathAtom(type: .binaryOperator, value: "\u{2296}"),
-        "otimes" : MTMathAtom(type: .binaryOperator, value: "\u{2297}"),
-        "oslash" : MTMathAtom(type: .binaryOperator, value: "\u{2298}"),
-        "odot" : MTMathAtom(type: .binaryOperator, value: "\u{2299}"),
-        "star"  : MTMathAtom(type: .binaryOperator, value: "\u{22C6}"),
-        "cdot"  : MTMathAtom(type: .binaryOperator, value: "\u{22C5}"),
-        "amalg" : MTMathAtom(type: .binaryOperator, value: "\u{2A3F}"),
+        "times": MTMathAtomFactory.times(),
+        "div": MTMathAtomFactory.divide(),
+        "pm": MTMathAtom(type: .binaryOperator, value: "\u{00B1}"),
+        "dagger": MTMathAtom(type: .binaryOperator, value: "\u{2020}"),
+        "ddagger": MTMathAtom(type: .binaryOperator, value: "\u{2021}"),
+        "mp": MTMathAtom(type: .binaryOperator, value: "\u{2213}"),
+        "setminus": MTMathAtom(type: .binaryOperator, value: "\u{2216}"),
+        "ast": MTMathAtom(type: .binaryOperator, value: "\u{2217}"),
+        "circ": MTMathAtom(type: .binaryOperator, value: "\u{2218}"),
+        "bullet": MTMathAtom(type: .binaryOperator, value: "\u{2219}"),
+        "wedge": MTMathAtom(type: .binaryOperator, value: "\u{2227}"),
+        "vee": MTMathAtom(type: .binaryOperator, value: "\u{2228}"),
+        "cap": MTMathAtom(type: .binaryOperator, value: "\u{2229}"),
+        "cup": MTMathAtom(type: .binaryOperator, value: "\u{222A}"),
+        "wr": MTMathAtom(type: .binaryOperator, value: "\u{2240}"),
+        "uplus": MTMathAtom(type: .binaryOperator, value: "\u{228E}"),
+        "sqcap": MTMathAtom(type: .binaryOperator, value: "\u{2293}"),
+        "sqcup": MTMathAtom(type: .binaryOperator, value: "\u{2294}"),
+        "oplus": MTMathAtom(type: .binaryOperator, value: "\u{2295}"),
+        "ominus": MTMathAtom(type: .binaryOperator, value: "\u{2296}"),
+        "otimes": MTMathAtom(type: .binaryOperator, value: "\u{2297}"),
+        "oslash": MTMathAtom(type: .binaryOperator, value: "\u{2298}"),
+        "odot": MTMathAtom(type: .binaryOperator, value: "\u{2299}"),
+        "star": MTMathAtom(type: .binaryOperator, value: "\u{22C6}"),
+        "cdot": MTMathAtom(type: .binaryOperator, value: "\u{22C5}"),
+        "amalg": MTMathAtom(type: .binaryOperator, value: "\u{2A3F}"),
 
         // No limit operators
-        "log" : MTMathAtomFactory.operatorWithName( "log", limits: false),
-        "lg" : MTMathAtomFactory.operatorWithName( "lg", limits: false),
-        "ln" : MTMathAtomFactory.operatorWithName( "ln", limits: false),
-        "sin" : MTMathAtomFactory.operatorWithName( "sin", limits: false),
-        "arcsin" : MTMathAtomFactory.operatorWithName( "arcsin", limits: false),
-        "sinh" : MTMathAtomFactory.operatorWithName( "sinh", limits: false),
-        "cos" : MTMathAtomFactory.operatorWithName( "cos", limits: false),
-        "arccos" : MTMathAtomFactory.operatorWithName( "arccos", limits: false),
-        "cosh" : MTMathAtomFactory.operatorWithName( "cosh", limits: false),
-        "tan" : MTMathAtomFactory.operatorWithName( "tan", limits: false),
-        "arctan" : MTMathAtomFactory.operatorWithName( "arctan", limits: false),
+        "log": MTMathAtomFactory.operatorWithName( "log", limits: false),
+        "lg": MTMathAtomFactory.operatorWithName( "lg", limits: false),
+        "ln": MTMathAtomFactory.operatorWithName( "ln", limits: false),
+        "sin": MTMathAtomFactory.operatorWithName( "sin", limits: false),
+        "arcsin": MTMathAtomFactory.operatorWithName( "arcsin", limits: false),
+        "sinh": MTMathAtomFactory.operatorWithName( "sinh", limits: false),
+        "cos": MTMathAtomFactory.operatorWithName( "cos", limits: false),
+        "arccos": MTMathAtomFactory.operatorWithName( "arccos", limits: false),
+        "cosh": MTMathAtomFactory.operatorWithName( "cosh", limits: false),
+        "tan": MTMathAtomFactory.operatorWithName( "tan", limits: false),
+        "arctan": MTMathAtomFactory.operatorWithName( "arctan", limits: false),
         "arctg": MTMathAtomFactory.operatorWithName( "arctg", limits: false),
-        "tanh" : MTMathAtomFactory.operatorWithName( "tanh", limits: false),
-        "cot" : MTMathAtomFactory.operatorWithName( "cot", limits: false),
-        "coth" : MTMathAtomFactory.operatorWithName( "coth", limits: false),
-        "sec" : MTMathAtomFactory.operatorWithName( "sec", limits: false),
-        "csc" : MTMathAtomFactory.operatorWithName( "csc", limits: false),
-        "arg" : MTMathAtomFactory.operatorWithName( "arg", limits: false),
-        "ker" : MTMathAtomFactory.operatorWithName( "ker", limits: false),
-        "dim" : MTMathAtomFactory.operatorWithName( "dim", limits: false),
-        "hom" : MTMathAtomFactory.operatorWithName( "hom", limits: false),
-        "exp" : MTMathAtomFactory.operatorWithName( "exp", limits: false),
-        "deg" : MTMathAtomFactory.operatorWithName( "deg", limits: false),
+        "tanh": MTMathAtomFactory.operatorWithName( "tanh", limits: false),
+        "cot": MTMathAtomFactory.operatorWithName( "cot", limits: false),
+        "coth": MTMathAtomFactory.operatorWithName( "coth", limits: false),
+        "sec": MTMathAtomFactory.operatorWithName( "sec", limits: false),
+        "csc": MTMathAtomFactory.operatorWithName( "csc", limits: false),
+        "arg": MTMathAtomFactory.operatorWithName( "arg", limits: false),
+        "ker": MTMathAtomFactory.operatorWithName( "ker", limits: false),
+        "dim": MTMathAtomFactory.operatorWithName( "dim", limits: false),
+        "hom": MTMathAtomFactory.operatorWithName( "hom", limits: false),
+        "exp": MTMathAtomFactory.operatorWithName( "exp", limits: false),
+        "deg": MTMathAtomFactory.operatorWithName( "deg", limits: false),
 
         // Limit operators
-        "lim" : MTMathAtomFactory.operatorWithName( "lim", limits: true),
-        "limsup" : MTMathAtomFactory.operatorWithName( "lim sup", limits: true),
-        "liminf" : MTMathAtomFactory.operatorWithName( "lim inf", limits: true),
-        "max" : MTMathAtomFactory.operatorWithName( "max", limits: true),
-        "min" : MTMathAtomFactory.operatorWithName( "min", limits: true),
-        "sup" : MTMathAtomFactory.operatorWithName( "sup", limits: true),
-        "inf" : MTMathAtomFactory.operatorWithName( "inf", limits: true),
-        "det" : MTMathAtomFactory.operatorWithName( "det", limits: true),
-        "Pr" : MTMathAtomFactory.operatorWithName( "Pr", limits: true),
-        "gcd" : MTMathAtomFactory.operatorWithName( "gcd", limits: true),
+        "lim": MTMathAtomFactory.operatorWithName( "lim", limits: true),
+        "limsup": MTMathAtomFactory.operatorWithName( "lim sup", limits: true),
+        "liminf": MTMathAtomFactory.operatorWithName( "lim inf", limits: true),
+        "max": MTMathAtomFactory.operatorWithName( "max", limits: true),
+        "min": MTMathAtomFactory.operatorWithName( "min", limits: true),
+        "sup": MTMathAtomFactory.operatorWithName( "sup", limits: true),
+        "inf": MTMathAtomFactory.operatorWithName( "inf", limits: true),
+        "det": MTMathAtomFactory.operatorWithName( "det", limits: true),
+        "Pr": MTMathAtomFactory.operatorWithName( "Pr", limits: true),
+        "gcd": MTMathAtomFactory.operatorWithName( "gcd", limits: true),
 
         // Large operators
-        "prod" : MTMathAtomFactory.operatorWithName( "\u{220F}", limits: true),
-        "coprod" : MTMathAtomFactory.operatorWithName( "\u{2210}", limits: true),
-        "sum" : MTMathAtomFactory.operatorWithName( "\u{2211}", limits: true),
-        "int" : MTMathAtomFactory.operatorWithName( "\u{222B}", limits: false),
-        "oint" : MTMathAtomFactory.operatorWithName( "\u{222E}", limits: false),
-        "bigwedge" : MTMathAtomFactory.operatorWithName( "\u{22C0}", limits: true),
-        "bigvee" : MTMathAtomFactory.operatorWithName( "\u{22C1}", limits: true),
-        "bigcap" : MTMathAtomFactory.operatorWithName( "\u{22C2}", limits: true),
-        "bigcup" : MTMathAtomFactory.operatorWithName( "\u{22C3}", limits: true),
-        "bigodot" : MTMathAtomFactory.operatorWithName( "\u{2A00}", limits: true),
-        "bigoplus" : MTMathAtomFactory.operatorWithName( "\u{2A01}", limits: true),
-        "bigotimes" : MTMathAtomFactory.operatorWithName( "\u{2A02}", limits: true),
-        "biguplus" : MTMathAtomFactory.operatorWithName( "\u{2A04}", limits: true),
-        "bigsqcup" : MTMathAtomFactory.operatorWithName( "\u{2A06}", limits: true),
+        "prod": MTMathAtomFactory.operatorWithName( "\u{220F}", limits: true),
+        "coprod": MTMathAtomFactory.operatorWithName( "\u{2210}", limits: true),
+        "sum": MTMathAtomFactory.operatorWithName( "\u{2211}", limits: true),
+        "int": MTMathAtomFactory.operatorWithName( "\u{222B}", limits: false),
+        "oint": MTMathAtomFactory.operatorWithName( "\u{222E}", limits: false),
+        "bigwedge": MTMathAtomFactory.operatorWithName( "\u{22C0}", limits: true),
+        "bigvee": MTMathAtomFactory.operatorWithName( "\u{22C1}", limits: true),
+        "bigcap": MTMathAtomFactory.operatorWithName( "\u{22C2}", limits: true),
+        "bigcup": MTMathAtomFactory.operatorWithName( "\u{22C3}", limits: true),
+        "bigodot": MTMathAtomFactory.operatorWithName( "\u{2A00}", limits: true),
+        "bigoplus": MTMathAtomFactory.operatorWithName( "\u{2A01}", limits: true),
+        "bigotimes": MTMathAtomFactory.operatorWithName( "\u{2A02}", limits: true),
+        "biguplus": MTMathAtomFactory.operatorWithName( "\u{2A04}", limits: true),
+        "bigsqcup": MTMathAtomFactory.operatorWithName( "\u{2A06}", limits: true),
 
         // Latex command characters
-        "{" : MTMathAtom(type: .open, value: "{"),
-        "}" : MTMathAtom(type: .close, value: "}"),
-        "$" : MTMathAtom(type: .ordinary, value: "$"),
-        "&" : MTMathAtom(type: .ordinary, value: "&"),
-        "#" : MTMathAtom(type: .ordinary, value: "#"),
-        "%" : MTMathAtom(type: .ordinary, value: "%"),
-        "_" : MTMathAtom(type: .ordinary, value: "_"),
-        " " : MTMathAtom(type: .ordinary, value: " "),
-        "backslash" : MTMathAtom(type: .ordinary, value: "\\"),
+        "{": MTMathAtom(type: .open, value: "{"),
+        "}": MTMathAtom(type: .close, value: "}"),
+        "$": MTMathAtom(type: .ordinary, value: "$"),
+        "&": MTMathAtom(type: .ordinary, value: "&"),
+        "#": MTMathAtom(type: .ordinary, value: "#"),
+        "%": MTMathAtom(type: .ordinary, value: "%"),
+        "_": MTMathAtom(type: .ordinary, value: "_"),
+        " ": MTMathAtom(type: .ordinary, value: " "),
+        "backslash": MTMathAtom(type: .ordinary, value: "\\"),
 
         // Punctuation
         // Note: \colon is different from : which is a relation
-        "colon" : MTMathAtom(type: .punctuation, value: ":"),
-        "cdotp" : MTMathAtom(type: .punctuation, value: "\u{00B7}"),
+        "colon": MTMathAtom(type: .punctuation, value: ":"),
+        "cdotp": MTMathAtom(type: .punctuation, value: "\u{00B7}"),
 
         // Other symbols
-        "degree" : MTMathAtom(type: .ordinary, value: "\u{00B0}"),
-        "neg" : MTMathAtom(type: .ordinary, value: "\u{00AC}"),
-        "angstrom" : MTMathAtom(type: .ordinary, value: "\u{00C5}"),
-        "|" : MTMathAtom(type: .ordinary, value: "\u{2016}"),
-        "vert" : MTMathAtom(type: .ordinary, value: "|"),
-        "ldots" : MTMathAtom(type: .ordinary, value: "\u{2026}"),
-        "prime" : MTMathAtom(type: .ordinary, value: "\u{2032}"),
-        "hbar" : MTMathAtom(type: .ordinary, value: "\u{210F}"),
-        "lbar" : MTMathAtom(type: .ordinary, value: "\u{019B}"),  // NEW ƛ
-        "Im" : MTMathAtom(type: .ordinary, value: "\u{2111}"),
-        "ell" : MTMathAtom(type: .ordinary, value: "\u{2113}"),
-        "wp" : MTMathAtom(type: .ordinary, value: "\u{2118}"),
-        "Re" : MTMathAtom(type: .ordinary, value: "\u{211C}"),
-        "mho" : MTMathAtom(type: .ordinary, value: "\u{2127}"),
-        "aleph" : MTMathAtom(type: .ordinary, value: "\u{2135}"),
-        "forall" : MTMathAtom(type: .ordinary, value: "\u{2200}"),
-        "exists" : MTMathAtom(type: .ordinary, value: "\u{2203}"),
-        "emptyset" : MTMathAtom(type: .ordinary, value: "\u{2205}"),
-        "nabla" : MTMathAtom(type: .ordinary, value: "\u{2207}"),
-        "infty" : MTMathAtom(type: .ordinary, value: "\u{221E}"),
-        "angle" : MTMathAtom(type: .ordinary, value: "\u{2220}"),
-        "top" : MTMathAtom(type: .ordinary, value: "\u{22A4}"),
-        "bot" : MTMathAtom(type: .ordinary, value: "\u{22A5}"),
-        "vdots" : MTMathAtom(type: .ordinary, value: "\u{22EE}"),
-        "cdots" : MTMathAtom(type: .ordinary, value: "\u{22EF}"),
-        "ddots" : MTMathAtom(type: .ordinary, value: "\u{22F1}"),
-        "triangle" : MTMathAtom(type: .ordinary, value: "\u{25B3}"),
-        "imath" : MTMathAtom(type: .ordinary, value: "\u{0001D6A4}"),
-        "jmath" : MTMathAtom(type: .ordinary, value: "\u{0001D6A5}"),
-        "upquote" : MTMathAtom(type: .ordinary, value: "\u{0027}"),
-        "partial" : MTMathAtom(type: .ordinary, value: "\u{0001D715}"),
+        "degree": MTMathAtom(type: .ordinary, value: "\u{00B0}"),
+        "neg": MTMathAtom(type: .ordinary, value: "\u{00AC}"),
+        "angstrom": MTMathAtom(type: .ordinary, value: "\u{00C5}"),
+        "|": MTMathAtom(type: .ordinary, value: "\u{2016}"),
+        "vert": MTMathAtom(type: .ordinary, value: "|"),
+        "ldots": MTMathAtom(type: .ordinary, value: "\u{2026}"),
+        "prime": MTMathAtom(type: .ordinary, value: "\u{2032}"),
+        "hbar": MTMathAtom(type: .ordinary, value: "\u{210F}"),
+        "lbar": MTMathAtom(type: .ordinary, value: "\u{019B}"),  // NEW ƛ
+        "Im": MTMathAtom(type: .ordinary, value: "\u{2111}"),
+        "ell": MTMathAtom(type: .ordinary, value: "\u{2113}"),
+        "wp": MTMathAtom(type: .ordinary, value: "\u{2118}"),
+        "Re": MTMathAtom(type: .ordinary, value: "\u{211C}"),
+        "mho": MTMathAtom(type: .ordinary, value: "\u{2127}"),
+        "aleph": MTMathAtom(type: .ordinary, value: "\u{2135}"),
+        "forall": MTMathAtom(type: .ordinary, value: "\u{2200}"),
+        "exists": MTMathAtom(type: .ordinary, value: "\u{2203}"),
+        "emptyset": MTMathAtom(type: .ordinary, value: "\u{2205}"),
+        "nabla": MTMathAtom(type: .ordinary, value: "\u{2207}"),
+        "infty": MTMathAtom(type: .ordinary, value: "\u{221E}"),
+        "angle": MTMathAtom(type: .ordinary, value: "\u{2220}"),
+        "top": MTMathAtom(type: .ordinary, value: "\u{22A4}"),
+        "bot": MTMathAtom(type: .ordinary, value: "\u{22A5}"),
+        "vdots": MTMathAtom(type: .ordinary, value: "\u{22EE}"),
+        "cdots": MTMathAtom(type: .ordinary, value: "\u{22EF}"),
+        "ddots": MTMathAtom(type: .ordinary, value: "\u{22F1}"),
+        "triangle": MTMathAtom(type: .ordinary, value: "\u{25B3}"),
+        "imath": MTMathAtom(type: .ordinary, value: "\u{0001D6A4}"),
+        "jmath": MTMathAtom(type: .ordinary, value: "\u{0001D6A5}"),
+        "upquote": MTMathAtom(type: .ordinary, value: "\u{0027}"),
+        "partial": MTMathAtom(type: .ordinary, value: "\u{0001D715}"),
 
         // Spacing
-        "," : MTMathSpace(space: 3),
-        ">" : MTMathSpace(space: 4),
-        ";" : MTMathSpace(space: 5),
-        "!" : MTMathSpace(space: -3),
-        "quad" : MTMathSpace(space: 18),  // quad = 1em = 18mu
-        "qquad" : MTMathSpace(space: 36), // qquad = 2em
+        ",": MTMathSpace(space: 3),
+        ">": MTMathSpace(space: 4),
+        ";": MTMathSpace(space: 5),
+        "!": MTMathSpace(space: -3),
+        "quad": MTMathSpace(space: 18),  // quad = 1em = 18mu
+        "qquad": MTMathSpace(space: 36), // qquad = 2em
 
         // Style
-        "displaystyle" : MTMathStyle(style: .display),
-        "textstyle" : MTMathStyle(style: .text),
-        "scriptstyle" : MTMathStyle(style: .script),
-        "scriptscriptstyle" : MTMathStyle(style: .scriptOfScript),
+        "displaystyle": MTMathStyle(style: .display),
+        "textstyle": MTMathStyle(style: .text),
+        "scriptstyle": MTMathStyle(style: .script),
+        "scriptscriptstyle": MTMathStyle(style: .scriptOfScript)
     ]
-    
+
     private static let textToLatexLock = NSLock()
-    static var _textToLatexSymbolName: [String: String]? = nil
+    static var _textToLatexSymbolName: [String: String]?
     public static var textToLatexSymbolName: [String: String] {
         get {
             if self._textToLatexSymbolName == nil {
@@ -437,11 +436,11 @@ public class MTMathAtomFactory {
         //     self._textToLatexSymbolName = newValue
         // }
     }
-    
+
   //  public static let sharedInstance = MTMathAtomFactory()
-    
-    static let fontStyles : [String: MTFontStyle] = [
-        "mathnormal" : .defaultStyle,
+
+    static let fontStyles: [String: MTFontStyle] = [
+        "mathnormal": .defaultStyle,
         "mathrm": .roman,
         "textrm": .roman,
         "rm": .roman,
@@ -462,14 +461,14 @@ public class MTMathAtomFactory {
         "mathbb": .blackboard,
         "mathbfit": .boldItalic,
         "bm": .boldItalic,
-        "text": .roman,
+        "text": .roman
     ]
-    
-    public static func fontStyleWithName(_ fontName:String) -> MTFontStyle? {
+
+    public static func fontStyleWithName(_ fontName: String) -> MTFontStyle? {
         fontStyles[fontName]
     }
-    
-    public static func fontNameForStyle(_ fontStyle:MTFontStyle) -> String {
+
+    public static func fontNameForStyle(_ fontStyle: MTFontStyle) -> String {
         switch fontStyle {
             case .defaultStyle: return "mathnormal"
             case .roman:        return "mathrm"
@@ -483,22 +482,22 @@ public class MTMathAtomFactory {
             case .boldItalic:   return "bm"
         }
     }
-    
+
     /// Returns an atom for the multiplication sign (i.e., \times or "*")
     public static func times() -> MTMathAtom {
         MTMathAtom(type: .binaryOperator, value: UnicodeSymbol.multiplication)
     }
-    
+
     /// Returns an atom for the division sign (i.e., \div or "/")
     public static func divide() -> MTMathAtom {
         MTMathAtom(type: .binaryOperator, value: UnicodeSymbol.division)
     }
-    
+
     /// Returns an atom which is a placeholder square
     public static func placeholder() -> MTMathAtom {
         MTMathAtom(type: .placeholder, value: UnicodeSymbol.whiteSquare)
     }
-    
+
     /** Returns a fraction with a placeholder for the numerator and denominator */
     public static func placeholderFraction() -> MTFraction {
         let frac = MTFraction()
@@ -508,7 +507,7 @@ public class MTMathAtomFactory {
         frac.denominator?.add(placeholder())
         return frac
     }
-    
+
     /** Returns a square root with a placeholder as the radicand. */
     public static func placeholderSquareRoot() -> MTRadical {
         let rad = MTRadical()
@@ -516,7 +515,7 @@ public class MTMathAtomFactory {
         rad.radicand?.add(placeholder())
         return rad
     }
-    
+
     /** Returns a radical with a placeholder as the radicand. */
     public static func placeholderRadical() -> MTRadical {
         let rad = MTRadical()
@@ -526,7 +525,7 @@ public class MTMathAtomFactory {
         rad.degree?.add(placeholder())
         return rad
     }
-    
+
     // MARK: -
     /** Gets the atom with the right type for the given character. If an atom
      cannot be determined for a given character this returns nil.
@@ -573,7 +572,7 @@ public class MTMathAtomFactory {
                 return nil
         }
     }
-    
+
     /** Returns a `MTMathList` with one atom per character in the given string. This function
      does not do any LaTeX conversion or interpretation. It simply uses `atom(forCharacter:)` to
      convert the characters to atoms. Any character that cannot be converted is ignored. */
@@ -586,7 +585,7 @@ public class MTMathAtomFactory {
         }
         return list
     }
-    
+
     /** Returns an atom with the right type for a given latex symbol (e.g. theta)
      If the latex symbol is unknown this will return nil. This supports LaTeX aliases as well.
      */
@@ -600,7 +599,7 @@ public class MTMathAtomFactory {
         }
         return nil
     }
-    
+
     /** Finds the name of the LaTeX symbol name for the given atom. This function is a reverse
      of the above function. If no latex symbol name corresponds to the atom, then this returns `nil`
      If nucleus of the atom is empty, then this will return `nil`.
@@ -613,13 +612,13 @@ public class MTMathAtomFactory {
         guard !atom.nucleus.isEmpty else { return nil }
         return Self.textToLatexSymbolName[atom.nucleus]
     }
-    
+
     /** Define a latex symbol for rendering. This function allows defining custom symbols that are
      not already present in the default set, or override existing symbols with new meaning.
      e.g. to define a symbol for "lcm" one can call:
      `MTMathAtomFactory.add(latexSymbol:"lcm", value:MTMathAtomFactory.operatorWithName("lcm", limits: false))` */
     public static func add(latexSymbol name: String, value: MTMathAtom) {
-        let _ = Self.textToLatexSymbolName
+        _ = Self.textToLatexSymbolName
         // above force textToLatexSymbolName to instantiate first, _textToLatexSymbolName also initialized.
         textToLatexLock.lock()
         defer { textToLatexLock.unlock() }
@@ -627,13 +626,13 @@ public class MTMathAtomFactory {
         // below update the underlying dictionary entry.
         Self._textToLatexSymbolName?[value.nucleus] = name
     }
-    
+
     /** Returns a large opertor for the given name. If limits is true, limits are set up on
      the operator and displayed differently. */
     public static func operatorWithName(_ name: String, limits: Bool) -> MTLargeOperator {
         MTLargeOperator(value: name, limits: limits)
     }
-    
+
     /** Returns an accent with the given name. The name of the accent is the LaTeX name
      such as `grave`, `hat` etc. If the name is not a recognized accent name, this
      returns nil. The `innerList` of the returned `MTAccent` is nil.
@@ -644,13 +643,13 @@ public class MTMathAtomFactory {
         }
         return nil
     }
-    
+
     /** Returns the accent name for the given accent. This is the reverse of the above
      function. */
     public static func accentName(_ accent: MTAccent) -> String? {
         accentValueToName[accent.nucleus]
     }
-    
+
     /** Creates a new boundary atom for the given delimiter name. If the delimiter name
      is not recognized it returns nil. A delimiter name can be a single character such
      as '(' or a latex command such as 'uparrow'.
@@ -663,7 +662,7 @@ public class MTMathAtomFactory {
         }
         return nil
     }
-    
+
     /** Returns the delimiter name for a boundary atom. This is a reverse of the above function.
      If the atom is not a boundary atom or if the delimiter value is unknown this returns `nil`.
      @note This is not an exact reverse of the above function. Some delimiters have two names (e.g.
@@ -673,7 +672,7 @@ public class MTMathAtomFactory {
         guard boundary.type == .boundary else { return nil }
         return Self.delimValueToName[boundary.nucleus]
     }
-    
+
     /** Returns a fraction with the given numerator and denominator. */
     public static func fraction(withNumerator num: MTMathList, denominator denom: MTMathList) -> MTFraction {
         let frac = MTFraction()
@@ -681,8 +680,8 @@ public class MTMathAtomFactory {
         frac.denominator = denom
         return frac
     }
-    
-    public static func mathListForCharacters(_ chars:String) -> MTMathList? {
+
+    public static func mathListForCharacters(_ chars: String) -> MTMathList? {
         let list = MTMathList()
         for ch in chars {
             if let atom = self.atom(forCharacter: ch) {
@@ -691,7 +690,7 @@ public class MTMathAtomFactory {
         }
         return list
     }
-    
+
     /** Simplification of above function when numerator and denominator are simple strings.
      This function converts the strings to a `MTFraction`. */
     public static func fraction(withNumeratorString numStr: String, denominatorString denomStr: String) -> MTFraction {
@@ -699,7 +698,6 @@ public class MTMathAtomFactory {
         let denom = Self.atomList(for: denomStr)
         return Self.fraction(withNumerator: num, denominator: denom)
     }
-    
 
     static let matrixEnvs = [
         "matrix": [],
@@ -709,7 +707,7 @@ public class MTMathAtomFactory {
         "vmatrix": ["vert", "vert"],
         "Vmatrix": ["Vert", "Vert"]
     ]
-    
+
     /** Builds a table for a given environment with the given rows. Returns a `MTMathAtom` containing the
      table and any other atoms necessary for the given environment. Returns nil and sets error
      if the table could not be built.
@@ -736,7 +734,7 @@ public class MTMathAtomFactory {
             guard columnDefinitions.count == table.numColumns else {
                 let message = "column definitions count (\(columnDefinitions.count)) does not equal columns count (\(table.numColumns)"
                 if error == nil {
-                    error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                    error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                 }
                 return nil
             }
@@ -780,7 +778,7 @@ public class MTMathAtomFactory {
                 if table.numColumns != 2 {
                     let message = "\(env) environment can only have 2 columns"
                     if error == nil {
-                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                     }
                     return nil
                 }
@@ -804,7 +802,7 @@ public class MTMathAtomFactory {
                 if table.numColumns != 1 {
                     let message = "\(env) environment can only have 1 column"
                     if error == nil {
-                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                     }
                     return nil
                 }
@@ -819,7 +817,7 @@ public class MTMathAtomFactory {
                 if table.numColumns != 3 {
                     let message = "\(env) environment can only have 3 columns"
                     if error == nil {
-                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                     }
                     return nil
                 }
@@ -832,11 +830,11 @@ public class MTMathAtomFactory {
                 table.set(alignment: .left, forColumn: 2)
 
                 return table
-            } else if env == "cases"  {
+            } else if env == "cases" {
                 if table.numColumns != 2 {
                     let message = "cases environment can only have 2 columns"
                     if error == nil {
-                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                        error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                     }
                     return nil
                 }
@@ -862,7 +860,7 @@ public class MTMathAtomFactory {
                 inner.innerList = MTMathList(atoms: [space, table])
 
                 return inner
-            }  else if env == "array" {
+            } else if env == "array" {
 
                 table.interRowAdditionalSpacing = 0
                 table.interColumnSpacing = 18
@@ -875,10 +873,9 @@ public class MTMathAtomFactory {
                 inner.innerList = MTMathList(atoms: [space, table])
 
                 return inner
-            }
-            else {
+            } else {
                 let message = "Unknown environment \(env)"
-                error = NSError(domain: MTParseError, code: MTParseErrors.invalidEnv.rawValue, userInfo: [NSLocalizedDescriptionKey:message])
+                error = NSError(domain: MTParseError, code: MTParseErrors.invalidEnv.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
                 return nil
             }
         }

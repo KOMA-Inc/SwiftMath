@@ -1,4 +1,3 @@
-
 //
 //  Created by Mike Griebling on 2022-12-31.
 //  Translated from an Objective-C implementation by Markus Sähn.
@@ -10,11 +9,11 @@
 import Foundation
 
 extension MTColor {
-    
-    public convenience init?(fromHexString hexString:String) {
+
+    public convenience init?(fromHexString hexString: String) {
         if hexString.isEmpty { return nil }
         if !hexString.hasPrefix("#") { return nil }
-        
+
         var rgbValue = UInt64(0)
         let scanner = Scanner(string: hexString)
         scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#")
@@ -24,5 +23,5 @@ extension MTColor {
                   blue: CGFloat((rgbValue & 0xFF))/255.0,
                   alpha: 1.0)
     }
-    
+
 }

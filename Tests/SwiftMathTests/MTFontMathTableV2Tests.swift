@@ -20,8 +20,8 @@ final class MTFontMathTableV2Tests: XCTestCase {
                 mTable?.fractionDenominatorDisplayStyleShiftDown,
                 mTable?.fractionDenominatorShiftDown,
                 mTable?.fractionNumeratorDisplayStyleGapMin,
-                mTable?.fractionNumeratorGapMin,
-            ].compactMap{$0}
+                mTable?.fractionNumeratorGapMin
+            ].compactMap {$0}
             print("\($0.rawValue).plist: \(values)")
         }
     }
@@ -53,8 +53,8 @@ final class MTFontMathTableV2Tests: XCTestCase {
                 mTable?.fractionDenominatorDisplayStyleShiftDown,
                 mTable?.fractionDenominatorShiftDown,
                 mTable?.fractionNumeratorDisplayStyleGapMin,
-                mTable?.fractionNumeratorGapMin,
-            ].compactMap{$0}
+                mTable?.fractionNumeratorGapMin
+            ].compactMap {$0}
             // if count % 50 == 0 {
             //     print(values) // accessed these values on global thread.
             // }
@@ -70,8 +70,8 @@ final class MTFontMathTableV2Tests: XCTestCase {
                     mTable?.fractionDenominatorDisplayStyleShiftDown,
                     mTable?.fractionDenominatorShiftDown,
                     mTable?.fractionNumeratorDisplayStyleGapMin,
-                    mTable?.fractionNumeratorGapMin,
-                ].compactMap{$0}
+                    mTable?.fractionNumeratorGapMin
+                ].compactMap {$0}
                 // if count % 50 == 0 {
                 //     print(values)
                 // }

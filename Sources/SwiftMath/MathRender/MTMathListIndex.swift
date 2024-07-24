@@ -24,7 +24,7 @@ import Foundation
  * The level of an index is the number of nodes in the LinkedList to get to the final path.
  */
 public class MTMathListIndex {
-    
+
     /**
      The type of the subindex.
      
@@ -48,16 +48,16 @@ public class MTMathListIndex {
         /// The subindex indexes into the degree (only valid for radicals)
         case degree
     }
-    
+
     /// The index of the associated atom.
     var atomIndex: Int
-    
+
     /// The type of subindex, e.g. superscript, numerator etc.
     var subIndexType: MTMathListSubIndexType = .none
-    
+
     /// The index into the sublist.
     var subIndex: MTMathListIndex?
-    
+
     var finalIndex: Int {
         if self.subIndexType == .none {
             return self.atomIndex
@@ -65,7 +65,7 @@ public class MTMathListIndex {
             return self.subIndex?.finalIndex ?? 0
         }
     }
-    
+
     /// Returns the previous index if present. Returns `nil` if there is no previous index.
     func prevIndex() -> MTMathListIndex? {
         if self.subIndexType == .none {
@@ -79,7 +79,7 @@ public class MTMathListIndex {
         }
         return nil
     }
-    
+
     /// Returns the next index.
     func nextIndex() -> MTMathListIndex {
         if self.subIndexType == .none {
@@ -90,27 +90,27 @@ public class MTMathListIndex {
             return MTMathListIndex(at: self.atomIndex, with: self.subIndex?.nextIndex(), type: self.subIndexType)
         }
     }
-    
+
     /**
      * Returns true if this index represents the beginning of a line. Note there may be multiple lines in a MTMathList,
      * e.g. a superscript or a fraction numerator. This returns true if the innermost subindex points to the beginning of a
      * line.
      */
     func isBeginningOfLine() -> Bool { self.finalIndex == 0 }
-    
+
     func isAtSameLevel(with index: MTMathListIndex?) -> Bool {
         if self.subIndexType != index?.subIndexType {
             return false
         } else if self.subIndexType == .none {
             // No subindexes, they are at the same level.
             return true
-        } else if (self.atomIndex != index?.atomIndex) {
+        } else if self.atomIndex != index?.atomIndex {
             return false
         } else {
             return self.subIndex?.isAtSameLevel(with: index?.subIndex) ?? false
         }
     }
-    
+
     /** Returns the type of the innermost sub index. */
     func finalSubIndexType() -> MTMathListSubIndexType {
         if self.subIndex?.subIndex != nil {
@@ -119,7 +119,7 @@ public class MTMathListIndex {
             return self.subIndexType
         }
     }
-    
+
     /** Returns true if any of the subIndexes of this index have the given type. */
     func hasSubIndex(ofType type: MTMathListSubIndexType) -> Bool {
         if self.subIndexType == type {
@@ -128,34 +128,34 @@ public class MTMathListIndex {
             return self.subIndex?.hasSubIndex(ofType: type) ?? false
         }
     }
-    
+
     func levelUp(with subIndex: MTMathListIndex?, type: MTMathListSubIndexType) -> MTMathListIndex {
         if self.subIndexType == .none {
             return MTMathListIndex(at: self.atomIndex, with: subIndex, type: type)
         }
-        
+
         return MTMathListIndex(at: self.atomIndex, with: self.subIndex?.levelUp(with: subIndex, type: type), type: self.subIndexType)
     }
-    
+
     func levelDown() -> MTMathListIndex? {
         if self.subIndexType == .none {
             return nil
         }
-        
+
         if let subIndexDown = self.subIndex?.levelDown() {
             return MTMathListIndex(at: self.atomIndex, with: subIndexDown, type: self.subIndexType)
         } else {
             return MTMathListIndex(level0Index: self.atomIndex)
         }
     }
-    
+
     /** Factory function to create a `MTMathListIndex` with no subindexes.
      @param index The index of the atom that the `MTMathListIndex` points at.
      */
     public init(level0Index: Int) {
         self.atomIndex = level0Index
     }
-    
+
     public convenience init(at location: Int, with subIndex: MTMathListIndex?, type: MTMathListSubIndexType) {
         self.init(level0Index: location)
         self.subIndexType = type
@@ -173,7 +173,7 @@ extension MTMathListIndex: CustomStringConvertible {
 }
 
 extension MTMathListIndex: Hashable {
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.atomIndex)
         hasher.combine(self.subIndexType)
@@ -187,7 +187,7 @@ extension MTMathListIndex: Equatable {
         if lhs.atomIndex != rhs.atomIndex || lhs.subIndexType != rhs.subIndexType {
             return false
         }
-        
+
         if rhs.subIndex != nil {
             return rhs.subIndex == lhs.subIndex
         } else {

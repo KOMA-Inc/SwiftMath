@@ -53,10 +53,10 @@ final class MathFontTests: XCTestCase {
     var fontFamilyNames: [String] {
         MathFont.allCases.map { $0.fontFamilyName }
     }
-    
+
     private let executionQueue = DispatchQueue(label: "com.swiftmath.mathbundle", attributes: .concurrent)
     private let executionGroup = DispatchGroup()
-    
+
     let totalCases = 5000
     var testCount = 0
     func testConcurrentThreadsafeScript() throws {

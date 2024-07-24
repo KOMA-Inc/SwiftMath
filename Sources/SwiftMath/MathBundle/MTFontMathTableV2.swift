@@ -28,8 +28,8 @@ internal class MTFontMathTableV2: MTFontMathTable {
         get { mTable }
     }
     override var muUnit: CGFloat { fontSize/18 }
-    
-    override func fontUnitsToPt(_ fontUnits:Int) -> CGFloat {
+
+    override func fontUnitsToPt(_ fontUnits: Int) -> CGFloat {
         CGFloat(fontUnits) * fontSize / CGFloat(unitsPerEm)
     }
     override func constantFromTable(_ constName: String) -> CGFloat {
@@ -54,25 +54,25 @@ internal class MTFontMathTableV2: MTFontMathTable {
      there are no variants for the glyph, the array contains the given glyph. */
     override func getHorizontalVariantsForGlyph(_ glyph: CGGlyph) -> [NSNumber?] {
         guard let variants = mTable[kHorizVariants] as? NSDictionary else { return [] }
-        return self.getVariantsForGlyph(glyph, inDictionary:variants)
+        return self.getVariantsForGlyph(glyph, inDictionary: variants)
     }
     override func getVariantsForGlyph(_ glyph: CGGlyph, inDictionary variants: NSDictionary) -> [NSNumber?] {
         let font = mathFont.mtfont(size: fontSize)
         let glyphName = font.get(nameForGlyph: glyph)
-        
+
         var glyphArray = [NSNumber]()
         let variantGlyphs = variants[glyphName] as? NSArray
 
         guard let variantGlyphs = variantGlyphs, variantGlyphs.count != .zero else {
             // There are no extra variants, so just add the current glyph to it.
             let glyph = font.get(glyphWithName: glyphName)
-            glyphArray.append(NSNumber(value:glyph))
+            glyphArray.append(NSNumber(value: glyph))
             return glyphArray
         }
         for gvn in variantGlyphs {
             if let glyphVariantName = gvn as? String {
                 let variantGlyph = font.get(glyphWithName: glyphVariantName)
-                glyphArray.append(NSNumber(value:variantGlyph))
+                glyphArray.append(NSNumber(value: variantGlyph))
             }
         }
         return glyphArray
@@ -114,7 +114,7 @@ internal class MTFontMathTableV2: MTFontMathTable {
     override func getTopAccentAdjustment(_ glyph: CGGlyph) -> CGFloat {
         let font = mathFont.mtfont(size: fontSize)
         let glyphName = font.get(nameForGlyph: glyph)
-        
+
         guard let accents = mTable[kAccents] as? NSDictionary, let val = accents[glyphName] as? NSNumber else {
             // If no top accent is defined then it is the center of the advance width.
             var glyph = glyph
@@ -127,7 +127,7 @@ internal class MTFontMathTableV2: MTFontMathTable {
     override func getVerticalGlyphAssembly(forGlyph glyph: CGGlyph) -> [GlyphPart] {
         let font = mathFont.mtfont(size: fontSize)
         let glyphName = font.get(nameForGlyph: glyph)
-        
+
         guard let assemblyTable = mTable[kVertAssembly] as? NSDictionary,
               let assemblyInfo = assemblyTable[glyphName] as? NSDictionary,
               let parts = assemblyInfo[kAssemblyParts] as? NSArray else {
@@ -135,7 +135,7 @@ internal class MTFontMathTableV2: MTFontMathTable {
             // parts should always have been defined, but if it isn't return nil
             return []
         }
-        
+
         var rv = [GlyphPart]()
         for part in parts {
             guard let partInfo = part as? NSDictionary,

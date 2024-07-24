@@ -1,4 +1,3 @@
-
 //
 //  Created by Mike Griebling on 2022-12-31.
 //  Translated from an Objective-C implementation by 安志钢.
@@ -18,8 +17,8 @@ extension MTBezierPath {
 }
 
 extension MTView {
-    
-    var backgroundColor:MTColor? {
+
+    var backgroundColor: MTColor? {
         get {
             MTColor(cgColor: self.layer?.backgroundColor ?? MTColor.clear.cgColor)
         }
@@ -28,8 +27,7 @@ extension MTView {
             self.wantsLayer = true
         }
     }
-    
+
 }
 
 #endif
-

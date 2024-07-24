@@ -9,13 +9,13 @@ import XCTest
 @testable import SwiftMath
 
 final class ConcurrencyThreadsafeTests: XCTestCase {
-    
+
     private let executionQueue = DispatchQueue(label: "com.swiftmath.concurrencytests", attributes: .concurrent)
     private let executionGroup = DispatchGroup()
-    
+
     let totalCases = 20
     var testCount = 0
-    
+
     func testSwiftMathConcurrentScript() throws {
         for caseNumber in 0 ..< totalCases {
             helperConcurrency(caseNumber, in: executionGroup, on: executionQueue) {
@@ -34,7 +34,7 @@ final class ConcurrencyThreadsafeTests: XCTestCase {
         }
         executionGroup.wait()
     }
-    func helperConcurrency(_ count: Int, in group: DispatchGroup, on queue: DispatchQueue, _ testClosure: @escaping () -> (Void)) {
+    func helperConcurrency(_ count: Int, in group: DispatchGroup, on queue: DispatchQueue, _ testClosure: @escaping () -> Void) {
         let workitem = DispatchWorkItem {
             testClosure()
         }
