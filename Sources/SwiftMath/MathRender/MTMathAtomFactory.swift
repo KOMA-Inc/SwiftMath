@@ -385,7 +385,7 @@ public class MTMathAtomFactory {
         "jmath": MTMathAtom(type: .ordinary, value: "\u{0001D6A5}"),
         "upquote": MTMathAtom(type: .ordinary, value: "\u{0027}"),
         "partial": MTMathAtom(type: .ordinary, value: "\u{0001D715}"),
-        "": MTMathAtom(type: .ordinary, value: ""),
+        "checkmark": MTMathAtom(type: .ordinary, value: "\u{2713}"),
 
         // Spacing
         ",": MTMathSpace(space: 3),
