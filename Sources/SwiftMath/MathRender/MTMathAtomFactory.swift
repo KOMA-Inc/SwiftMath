@@ -223,6 +223,7 @@ public class MTMathAtomFactory {
         "Longrightarrow": MTMathAtom(type: .relation, value: "\u{27F9}"),
         "Longleftrightarrow": MTMathAtom(type: .relation, value: "\u{27FA}"),
         "implies": MTMathAtom(type: .relation, value: "\u{21D2}"),
+        "rightleftarrows": MTMathAtom(type: .relation, value: "\u{21C4}"),
 
         // Relations
         "leq": MTMathAtom(type: .relation, value: UnicodeSymbol.lessEqual),
