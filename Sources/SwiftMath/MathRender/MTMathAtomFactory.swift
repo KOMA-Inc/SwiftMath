@@ -386,6 +386,7 @@ public class MTMathAtomFactory {
         "upquote": MTMathAtom(type: .ordinary, value: "\u{0027}"),
         "partial": MTMathAtom(type: .ordinary, value: "\u{0001D715}"),
         "checkmark": MTMathAtom(type: .ordinary, value: "\u{2713}"),
+        "varnothing": MTMathAtom(type: .ordinary, value: "\u{2300}"),
 
         // Spacing
         ",": MTMathSpace(space: 3),
