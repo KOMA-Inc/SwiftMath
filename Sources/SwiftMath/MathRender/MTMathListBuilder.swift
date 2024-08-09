@@ -1064,7 +1064,7 @@ public struct MTMathListBuilder {
     }
 
     mutating func readCommand() -> String {
-        let singleChars = "{}$#%_| ,>;!\\"
+        let singleChars = "{}$#%_| ,>;!\\&"
         if self.hasCharacters {
             let char = self.getNextCharacter()
             if singleChars.firstIndex(of: char) != nil {
