@@ -256,6 +256,7 @@ public class MTMathAtomFactory {
         "sqsupseteq": MTMathAtom(type: .relation, value: "\u{2292}"),
         "models": MTMathAtom(type: .relation, value: "\u{22A7}"),
         "perp": MTMathAtom(type: .relation, value: "\u{27C2}"),
+        "geqslant": MTMathAtom(type: .relation, value: "\u{02A7E}"),
 
         // operators
         "times": MTMathAtomFactory.times(),
@@ -388,6 +389,8 @@ public class MTMathAtomFactory {
         "partial": MTMathAtom(type: .ordinary, value: "\u{0001D715}"),
         "checkmark": MTMathAtom(type: .ordinary, value: "\u{2713}"),
         "varnothing": MTMathAtom(type: .ordinary, value: "\u{2300}"),
+        "therefore": MTMathAtom(type: .ordinary, value: "\u{2234}"),
+        "because": MTMathAtom(type: .ordinary, value: "\u{2235}"),
 
         // Spacing
         ",": MTMathSpace(space: 3),
@@ -465,7 +468,8 @@ public class MTMathAtomFactory {
         "mathbb": .blackboard,
         "mathbfit": .boldItalic,
         "bm": .boldItalic,
-        "text": .roman
+        "text": .roman,
+        "boldsymbol": .bold
     ]
 
     public static func fontStyleWithName(_ fontName: String) -> MTFontStyle? {
@@ -735,7 +739,7 @@ public class MTMathAtomFactory {
         }
 
         if let columnDefinitions {
-            guard columnDefinitions.count == table.numColumns else {
+            guard columnDefinitions.count >= table.numColumns else {
                 let message = "column definitions count (\(columnDefinitions.count)) does not equal columns count (\(table.numColumns)"
                 if error == nil {
                     error = NSError(domain: MTParseError, code: MTParseErrors.invalidNumColumns.rawValue, userInfo: [NSLocalizedDescriptionKey: message])
