@@ -743,7 +743,7 @@ public struct MTMathListBuilder {
         } else if command == "\\" || command == "cr" {
             if currentEnv != nil {
                 // Stop the current list and increment the row count
-                currentEnv!.numRows+=1
+                currentEnv?.numRows += 1
                 return list
             } else {
                 // Create a new table with the current list and a default env
@@ -964,10 +964,36 @@ public struct MTMathListBuilder {
         return definitions
     }
 
-    mutating func buildTable(env: String?, firstList: MTMathList?, isRow: Bool) -> MTMathAtom? {
-        // Save the current env till an new one gets built.
-        let oldEnv = self.currentEnv
+    func saveInsert<T>(into array: inout [[T]], row: inout Int, col: inout Int, value: T) {
+        // Ensure the row index is within bounds
+        if row < array.count {
+            // If the column index is within the current row's bounds, insert the value
+            if col < array[row].count {
+                array[row][col] = value
+            } else {
+                // If column index exceeds, move to the next row
+                col = 0
+                row += 1
+                saveInsert(into: &array, row: &row, col: &col, value: value)
+            }
+        } else {
+            // If row index exceeds, append a new row with the value
+            array.append([value])
+            col = 1
+        }
+    }
 
+    func saveInsert<T>(into array: inout [[T]], row: inout Int, value: [T]) {
+        if row < array.count {
+            array[row] = value
+        } else {
+            array.append(value)
+        }
+    }
+
+    mutating func buildTable(env: String?, firstList: MTMathList?, isRow: Bool) -> MTMathAtom? {
+        // Save the current env till a new one gets built.
+        let oldEnv = currentEnv
         currentEnv = MTEnvProperties(name: env)
 
         let columnDefinitions: [MTColumnAlignment]? = if env == "array" {
@@ -980,36 +1006,29 @@ public struct MTMathListBuilder {
 
         var currentRow = 0
         var currentCol = 0
+        var rows: [[MTMathList]] = [[]]
 
-        var rows = [[MTMathList]]()
-        rows.append([MTMathList]())
-        if firstList != nil {
-            rows[currentRow].append(firstList!)
+        if let firstList {
+            saveInsert(into: &rows, row: &currentRow, col: &currentCol, value: firstList)
             if isRow {
-                currentEnv!.numRows+=1
-                currentRow+=1
-                rows.append([MTMathList]())
+                currentEnv?.numRows += 1
+                saveInsert(into: &rows, row: &currentRow, value: [])
             } else {
-                currentCol+=1
+                currentCol += 1
             }
         }
-        while !currentEnv!.ended && self.hasCharacters {
-            let list = self.buildInternal(false)
-            if list == nil {
+
+        while !currentEnv!.ended && hasCharacters {
+            guard let list = buildInternal(false) else {
                 // If there is an error building the list, bail out early.
                 return nil
             }
-            rows[currentRow].append(list!)
-            currentCol+=1
-            if currentEnv!.numRows > currentRow {
-                currentRow = currentEnv!.numRows
-                rows.append([MTMathList]())
-                currentCol = 0
-            }
+
+            saveInsert(into: &rows, row: &currentRow, col: &currentCol, value: list)
         }
 
         if !currentEnv!.ended && currentEnv!.envName != nil {
-            self.setError(.missingEnd, message: "Missing \\end")
+            setError(.missingEnd, message: "Missing \\end")
             return nil
         }
 
