@@ -763,17 +763,16 @@ public struct MTMathListBuilder {
                 self.setError(.missingBegin, message: errorMessage)
                 return nil
             }
-            let env = self.readEnvironment()
-            if env == nil {
-                return nil
-            }
-            if env! != currentEnv!.envName {
-                let errorMessage = "Begin environment name \(currentEnv!.envName!) does not match end name: \(env!)"
+            guard let env = self.readEnvironment() else { return nil }
+
+            let currentEnvName = currentEnv?.envName
+            if env != currentEnvName {
+                let errorMessage = "Begin environment name \(currentEnvName ?? "nil") does not match end name: \(env)"
                 self.setError(.invalidEnv, message: errorMessage)
                 return nil
             }
             // Finish the current environment.
-            currentEnv!.ended = true
+            currentEnv?.ended = true
             return list
         }
         return nil
